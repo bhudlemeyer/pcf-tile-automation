@@ -1,0 +1,26 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: golang
+
+inputs:
+- name: pcf-pipelines
+
+run:
+  path: bash
+  args:
+  - -ce
+  - |
+    export GOPATH=$PWD/go
+    export PATH=$GOPATH/bin:$PATH
+
+    go get github.com/onsi/ginkgo/ginkgo
+    go get github.com/onsi/gomega
+    go get github.com/concourse/atc
+
+    pushd pcf-pipelines
+      ginkgo -p -r -randomizeAllSpecs
+    popd

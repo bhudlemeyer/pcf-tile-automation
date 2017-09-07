@@ -1,0 +1,57 @@
+# Copyright 2017-Present Pivotal Software, Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Resource
+# ------------------------------
+# The token used to download the product file from Pivotal Network. Find this
+# on your Pivotal Network profile page:
+# https://network.pivotal.io/users/dashboard/edit-profile
+pivnet_token: CHANGEME
+# The minor product version to track, as a regexp. To track 1.11.x of a product, this would be "^1\.11\..*$"
+product_version_regex: ^1\.11\..*$
+
+# Operations Manager
+# ------------------------------
+# Credentials for Operations Manager. These are used for uploading, staging,
+# and deploying the product file on Operations Manager.
+opsman_admin_username: CHANGEME
+opsman_admin_password: CHANGEME
+opsman_uri: CHANGEME
+
+# The IaaS name for which stemcell to download. This must match the IaaS name
+# within the stemcell to download, e.g. "vsphere"
+iaas_type: CHANGEME
+
+# Interval to check on new releases from Pivotal Network
+# eg. 2h, 3h45m, 3000s
+pivnet_poll_interval: 1h
+
+# om-linux
+# ------------------------------
+# The name of the product on Pivotal Network. This is used to configure the
+# resource that will fetch the product file.
+#
+# This can be found in the URL of the product page, e.g. for rabbitmq the URL
+# is https://network.pivotal.io/products/pivotal-rabbitmq-service, and the
+# product slug is 'pivotal-rabbitmq-service'.
+product_slug: CHANGEME
+# The name of the product file found in the metadata file for the product. This
+# will be used for staging the file in Operations Manager.
+#
+# This can be found in the .pivotal file's manifest for the product. This can
+# be found in the .pivotal file with the following:
+# `unzip -p p-rabbitmq-1.7.8.pivotal "metadata/*.yml" | head`
+product_name: CHANGEME
+
+git_private_key:

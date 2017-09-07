@@ -1,0 +1,21 @@
+---
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: {repository: czero/cflinuxfs2}
+
+params:
+  OPSPW:
+  OPSMANIP:
+  OPSMAN_USERNAME:
+  BOSH_CLIENT:
+  BOSH_CLIENT_SECRET:
+
+inputs:
+  - name: pcf-pipelines
+  - name: boshv2-cli
+
+run:
+  path: pcf-pipelines/tasks/smoke-test/task.sh

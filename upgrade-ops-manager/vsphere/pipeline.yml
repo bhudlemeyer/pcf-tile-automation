@@ -1,0 +1,157 @@
+# Copyright 2017-Present Pivotal Software, Inc. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+resources:
+- name: pcf-pipelines
+  type: git
+  source:
+    uri: git@github.com:pivotal-cf/pcf-pipelines.git
+    branch: master
+    private_key: {{git_private_key}}
+
+- name: pivnet-opsmgr
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: ops-manager
+    product_version: {{opsman_major_minor_version}}
+    sort_by: semver
+
+- name: schedule
+  type: time
+  source:
+    interval: 30m
+    start: "12:50 PM"
+    stop: "01:30 PM"
+    location: America/Los_Angeles
+    days: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
+
+jobs:
+- name: regulator
+  plan:
+  - get: schedule
+    trigger: true
+  - get: pivnet-opsmgr
+    params: { globs: [] }
+
+- name: confirm-compatible-version
+  serial: true
+  plan:
+  - aggregate:
+    - get: product-files
+      resource: pivnet-opsmgr
+      passed: [regulator]
+      trigger: true
+      params:
+        globs: ["*.ova"]
+    - get: pcf-pipelines
+
+  - task: allow-patch-release-only-check
+    file: pcf-pipelines/tasks/allow-only-patch-upgrades/task.yml
+    params:
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+      OPSMAN_URI: {{opsman_uri}}
+      PRODUCT_NAME: p-bosh
+
+- name: upgrade-opsmgr
+  plan:
+  - aggregate:
+    - get: pivnet-opsmgr
+      trigger: true
+      passed: [confirm-compatible-version]
+      params:
+        globs: ["*.ova"]
+    - get: pcf-pipelines
+
+  - task: wait-opsman-clear
+    file: pcf-pipelines/tasks/wait-opsman-clear/task.yml
+    params:
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+      OPSMAN_URI: {{opsman_uri}}
+
+  - aggregate:
+    - task: export-opsmgr-settings
+      file: pcf-pipelines/tasks/export-opsmgr-settings/task.yml
+      params:
+        OPSMAN_USERNAME: {{opsman_admin_username}}
+        OPSMAN_PASSWORD: {{opsman_admin_password}}
+        OPSMAN_URI: {{opsman_uri}}
+        OPSMAN_SETTINGS_FILENAME: installation.zip
+        OPSMAN_EXPORT_TIMEOUT: {{opsman_export_timeout}}
+
+    - task: exported-opsmgr-diagnostic-report
+      file: pcf-pipelines/tasks/export-opsmgr-diagnostic-report/task.yml
+      params:
+        OPSMAN_USERNAME: {{opsman_admin_username}}
+        OPSMAN_PASSWORD: {{opsman_admin_password}}
+        OPSMAN_URI: {{opsman_uri}}
+
+  - task: deploy-opsman-vm
+    file: pcf-pipelines/tasks/deploy-opsman-vm/task.yml
+    params:
+      OPSMAN_TIMEOUT: {{opsman_timeout_seconds}}
+      GOVC_USERNAME: {{vcenter_username}}
+      GOVC_PASSWORD: {{vcenter_password}}
+      GOVC_DATACENTER: {{vcenter_datacenter}}
+      GOVC_CLUSTER: {{vcenter_cluster}}
+      GOVC_RESOURCE_POOL: {{vcenter_resource_pool}}
+      GOVC_DATASTORE: {{vcenter_datastore}}
+      GOVC_URL: {{vcenter_url}}
+      OPSMAN_IP: {{opsman_ip}}
+      OPSMAN_URI: {{opsman_uri}}
+      NETMASK: {{netmask}}
+      GATEWAY: {{gateway}}
+      DNS: {{dns}}
+      NTP: {{ntp}}
+      OPSMAN_NETWORK: {{opsman_network}}
+      OPSMAN_VM_FOLDER: {{opsman_vm_folder}}
+      OPSMAN_SSH_PASSWORD: {{opsman_ssh_password}}
+
+  - task: import-opsmgr
+    file: pcf-pipelines/tasks/import-opsmgr-settings/task.yml
+    params:
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+      OPSMAN_PASSPHRASE: {{opsman_passphrase}}
+      OPSMAN_URI: {{opsman_uri}}
+      OPSMAN_SETTINGS_FILENAME: installation.zip
+
+  - task: download-stemcells
+    file: pcf-pipelines/tasks/download-pivnet-stemcells/task.yml
+    params:
+      API_TOKEN: {{pivnet_token}}
+      IAAS_TYPE: vsphere
+
+  - task: restore-stemcells
+    file: pcf-pipelines/tasks/restore-stemcells/task.yml
+    params:
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+      OPSMAN_URI: {{opsman_uri}}
+
+  - task: apply-changes
+    file: pcf-pipelines/tasks/apply-changes/task.yml
+    params:
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+      OPSMAN_URI: {{opsman_uri}}
