@@ -5,12 +5,12 @@ installing and upgrading [Pivotal Cloud Foundry](https://pivotal.io/platform) ba
 
 Specifically
 
-MySQL
-RabbitMQ
-Redis
-Spring-Cloud
-PCF Metrics
-JMX Bridge
+ MySQL
+ RabbitMQ
+ Redis
+ Spring-Cloud
+ PCF Metrics
+ JMX Bridge
 
 
 
