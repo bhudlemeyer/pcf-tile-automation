@@ -1,4 +1,7 @@
 # PCF Tile install Pipelines
+For the most current base (opsmanager and ERT) pipelines please reference the [pcf-pipelines](https://github.com/pivotal-cf/pcf-pipelines) repo maintined by the team from Pivotal. 
+
+
 
 This is a collection of [Concourse](https://concourse.ci) pipelines for
 installing and upgrading [Pivotal Cloud Foundry](https://pivotal.io/platform) backing service tiles.
@@ -36,7 +39,6 @@ fly -t yourtarget set-pipeline \
   --load-vars-from upgrade-ops-manager/aws/params.yml
 ```
 
-For the most current base PCF pipelines please reference the [pcf-pipelines](https://github.com/pivotal-cf/pcf-pipelines) maintined by the team from Pivotal. This repo is meant to build off of that original amazing work and add in backing service install and config.
 
 Under the pipelines folder you will find a pipeline for each backing service along with a pipeline with all backing services and the params file needed to make each one work correctly today. This is a new repo and does not currently have allot of smarts in the tasks today IE if / that statements etc. As a result it is opinionated on what settings need to be provided and which are ignored for right now.
 
