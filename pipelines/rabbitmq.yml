@@ -97,7 +97,7 @@ jobs:
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
       OPS_MGR_HOST: {{opsman_uri}}
-      SINGLETON_JOB_AZ: {{az_1_name}}
+      SINGLETON_JOB_AZ: {{singleton_job_az}}
       OTHER_JOB_AZS: {{services_nw_azs}}
       NETWORK_NAME: {{services_network_name}}
       RABBITMQ_PLUGINS: "rabbitmq_management"

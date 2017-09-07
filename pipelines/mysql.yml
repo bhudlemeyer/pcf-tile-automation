@@ -97,7 +97,7 @@ jobs:
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
       OPS_MGR_HOST: {{opsman_uri}}
-      SINGLETON_JOB_AZ: {{az_1_name}}
+      SINGLETON_JOB_AZ: {{singelton_az}}
       NETWORK_NAME: {{services_network_name}}
       PRODUCT_NAME: "p-mysql"
       DEPLOYMENT_NW_AZS: {{services_nw_azs}}

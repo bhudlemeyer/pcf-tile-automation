@@ -97,9 +97,9 @@ jobs:
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
       OPS_MGR_HOST: {{opsman_uri}}
-      SINGLETON_JOB_AZ: {{az_1_name}}
-      OTHER_JOB_AZS: {{infra_nw_azs}}
-      NETWORK_NAME: {{infra_network_name}}
+      SINGLETON_JOB_AZ: {{singleton_az}}
+      OTHER_JOB_AZS: {{other_job_az}}
+      NETWORK_NAME: {{network_name}}
       JMX_ADMIN_USR: {{jmx_admin_usr}}
       JMX_ADMIN_PWD: {{jmx_admin_pwd}}
       JMX_SECURITY_LOGGING: {{jmx_security_logging}}

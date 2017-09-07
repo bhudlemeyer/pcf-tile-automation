@@ -1,0 +1,39 @@
+# Pipeline resource configuration
+pivnet_token:             # EA Pivnet token for downloading resources from Pivnet. Find this token at https://network.pivotal.io/users/dashboard/edit-profile
+github_token:             # GitHub token for downloading resources from GitHub
+git_private_key: 
+
+redis_major_minor_version: ^1\.8\..*$
+tile_upload_timeout: 1800
+pivnet_poll_interval: 1h
+iaas_type: 
+
+opsman_uri:               # FQDN to access Ops Manager without protocol (will use https), ex: opsmgr.example.com
+opsman_admin_username:    # Username for Ops Manager admin account
+opsman_admin_password:    # Password for Ops Manager admin account
+opsman_timeout_seconds:  # Timeout to wait for Ops Manager to become available
+om_ip:                   # IP to assign to Ops Manager VM
+
+singleton_job_az:        #AZ assigned to singleton jobs in redis
+services_network_name:   # Name of services network as defined in ops manager 
+services_nw_azs:         # Comma seperated list of AZ's to be associated with this network
+
+dynamic_services_network_name: #Name of dynamic services network as defined in Ops Manager
+dynamic_services_nw_azs:       # Comma seperated list of AZ's to be associated with this network
+
+syslog_host: 
+syslog_port: 
+syslog_protocol:
+
+redis_small_plan_cache_status: "Plan Inactive"
+redis_medium_plan_cache_status: "Plan Inactive"
+redis_large_plan_cache_status: "Plan Inactive"
+
+redis_backups_scp_host:
+redis_backups_scp_port:
+redis_backups_scp_user:
+redis_backups_scp_key:
+redis_backups_scp_destination:
+redis_backups_scp_timeout: 
+redis_backups_cron_schedule:
+redis_disable_tls: false # if using ops man before 1.10 set to true

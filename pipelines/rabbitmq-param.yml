@@ -1,0 +1,37 @@
+# Pipeline resource configuration
+pivnet_token:       # EA Pivnet token for downloading resources from Pivnet. Find this token at https://network.pivotal.io/users/dashboard/edit-profile
+github_token:       # GitHub token for downloading resources from GitHub
+git_private_key: 
+
+rabbitmq_major_minor_version: ^1\.8\..*$
+tile_upload_timeout: 1800
+pivnet_poll_interval: 1h
+iaas_type:
+
+opsman_uri:              # FQDN to access Ops Manager without protocol (will use https), ex: opsmgr.example.com
+opsman_admin_username:   # Username for Ops Manager admin account
+opsman_admin_password:   # Password for Ops Manager admin account
+opsman_timeout_seconds:  # Timeout to wait for Ops Manager to become available
+om_ip:                   # IP to assign to Ops Manager VM
+
+singleton_job_az:        # AZ to use for singleton jobs
+services_network_name:   # Services network name as defined in Ops manager
+services_nw_azs:         # Comma seperated list of AZ's to be associated with this network
+
+dynamic_services_network_name:  # Dynamic services network as defined in Ops Manager
+dynamic_services_nw_azs:        # Comma seperated list of AZ's to be associated with this network
+
+
+syslog_host:
+syslog_port:
+
+rabbitmq_private_key_pem:  # RSA private key PEM in single-line format
+rabbitmq_cert_pem:  # RSA certificate PEM in single-line format
+rabbitmq_ca_cert:  # Defautls to empty
+rabbitmq_ssl_verify: false  # REQUIRED: Veriy SSL certs
+rabbitmq_ssl_verify_depth: 5  # SSL verifycation depth, defaults to 5
+rabbitmq_ssl_require_peer_validation: false  # Enforce peer SSL certification validation, defaults to false
+rabbitmq_cookie:  # RabbitMQ server cookie
+rabbitmq_config:  # RabbitMQ configuration string
+rabbitmq_admin:   # RabbitMQ admin to create during rabbitmq deploy Not Optional
+rabbitmq_pw:  #rabbitmq admin pw

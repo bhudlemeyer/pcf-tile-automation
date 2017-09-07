@@ -1,0 +1,23 @@
+# Pipeline resource configuration
+pivnet_token:       # EA Pivnet token for downloading resources from Pivnet. Find this token at https://network.pivotal.io/users/dashboard/edit-profile
+github_token:       # GitHub token for downloading resources from GitHub
+git_private_key: 
+
+jmx_major_minor_version: ^1\.9\..*$ # version of jmx to track
+tile_upload_timeout: 1800
+pivnet_poll_interval: 1h
+iaas_type: 
+
+opsman_uri:               # FQDN to access Ops Manager without protocol (will use https), ex: opsmgr.example.com
+om_ip:                    # IP address of Ops Manager
+opsman_admin_username:    # Username for Ops Manager admin account
+opsman_admin_password:    # Password for Ops Manager admin account opsman_timeout_seconds: 100  # Timeout to wait for Ops Manager to become available
+singleton_az:             # Logical name of availability zone for singleton jobs. No spaces or special characters.
+other_job_az:             # list of AZs 
+network_name:             # network to place jmx bridge on
+
+## JMX Bridge tile configuration goes here
+jmx_admin_usr: 
+jmx_admin_pwd:
+jmx_security_logging: 
+jmx_use_ssl: 

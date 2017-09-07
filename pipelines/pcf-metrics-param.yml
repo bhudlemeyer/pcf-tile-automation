@@ -1,0 +1,23 @@
+# Pipeline resource configuration
+pivnet_token:            # EA Pivnet token for downloading resources from Pivnet. Find this token at https://network.pivotal.io/users/dashboard/edit-profile
+github_token:            # GitHub token for downloading resources from GitHub
+git_private_key:
+
+metrics_major_minor_version: ^1\.3\..*$ #version to track too
+tile_upload_timeout: 
+pivnet_poll_interval: 
+iaas_type: 
+
+# Ops Manager
+opsman_uri:              # FQDN to access Ops Manager without protocol (will use https), ex: opsmgr.example.com
+om_ip: 			 # IP address of ops manager
+opsman_admin_username:   # Username for Ops Manager admin account
+opsman_admin_password:   # Password for Ops Manager admin account
+opsman_timeout_seconds:  # Timeout to wait for Ops Manager to become available
+
+
+# AZ configuration for Ops Director
+singleton_job_az:       #AZ singleton jobs are to be assigned too
+other_job_az:           #AZ for none singleton jobs to be spread accross COMMA seperated list
+network_name:                #Network to attach pcf metrics to 
+metrics_notifications_email:   # email address to send messages to about pcf metrics

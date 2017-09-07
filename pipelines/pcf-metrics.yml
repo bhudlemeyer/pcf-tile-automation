@@ -98,9 +98,9 @@ jobs:
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
       OPS_MGR_HOST: {{opsman_uri}}
-      SINGLETON_JOB_AZ: {{az_1_name}}
-      OTHER_JOB_AZS: {{infra_nw_azs}}
-      NETWORK_NAME: {{infra_network_name}}
+      SINGLETON_JOB_AZ: {{singleton_job_az}}
+      OTHER_JOB_AZS: {{other_job_az}}
+      NETWORK_NAME: {{network_name}}
       NOTIFICATIONS_EMAIL: {{metrics_notifications_email}}
 
 # uncomment to deploy pcf metrics after config completes. 

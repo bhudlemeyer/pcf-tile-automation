@@ -1,0 +1,32 @@
+# Pipeline resource configuration
+pivnet_token:           # EA Pivnet token for downloading resources from Pivnet. Find this token at https://network.pivotal.io/users/dashboard/edit-profile
+github_token:           # GitHub token for downloading resources from GitHub
+git_private_key: 
+
+mysql_major_minor_version: ^1\.10\..*$
+tile_upload_timeout: 1800
+pivnet_poll_interval: 1h
+iaas_type: 
+
+opsman_uri:            # FQDN to access Ops Manager without protocol (will use https), ex: opsmgr.example.com
+om_ip:                  # IP address of ops manager
+opsman_admin_username: # Username for Ops Manager admin account
+opsman_admin_password: # Password for Ops Manager admin account
+opsman_timeout_seconds: # Timeout to wait for Ops Manager to become available
+
+singleton_az: 
+services_network_name: "SERVICES"        # name of service network in ops manager. 
+services_nw_azs: AZ1,AZ2,AZ3             # Comma seperated list of AZ's to be associated with this network
+
+## Syslog endpoint configuration goes here
+syslog_host: 
+syslog_port: 
+syslog_protocol: tcp
+
+mysql_protect_email: #email address to send protection alerts to in Mysql tile NOT Optional
+mysql_backups_cron_schedule:
+mysql_backups_scp_host:
+mysql_backups_scp_port: 
+mysql_backups_scp_user: 
+mysql_backups_scp_key: 
+mysql_backups_scp_destination: 
