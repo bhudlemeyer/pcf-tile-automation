@@ -67,19 +67,19 @@ var _ = Describe("Tasks", func() {
 			log.Fatalf("failed to unmarshal task at %s: %s", taskPath, err)
 		}
 
-		if strings.HasPrefix(task.Run.Path, "pcf-pipelines") {
+		if strings.HasPrefix(task.Run.Path, "pcf-tile-automation") {
 			failMessage := fmt.Sprintf(`
 Found error with the following task:
 %s
 `, taskPath)
 
 			Context(fmt.Sprintf("task at %s", taskPath), func() {
-				It("includes a pcf-pipelines input", func() {
-					match, err := ContainElement(atc.TaskInputConfig{Name: "pcf-pipelines", Path: ""}).Match(task.Inputs)
+				It("includes a pcf-tile-automation input", func() {
+					match, err := ContainElement(atc.TaskInputConfig{Name: "pcf-tile-automation", Path: ""}).Match(task.Inputs)
 					Expect(err).NotTo(HaveOccurred())
 
 					if !match {
-						Fail(fmt.Sprintf("%s\n%s", failMessage, "Fix it by adding the following input:\n- name: pcf-pipelines"))
+						Fail(fmt.Sprintf("%s\n%s", failMessage, "Fix it by adding the following input:\n- name: pcf-tile-automation"))
 					}
 				})
 

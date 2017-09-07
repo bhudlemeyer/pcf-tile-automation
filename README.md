@@ -1,5 +1,5 @@
 # PCF Tile install Pipelines
-For the most current base (opsmanager and ERT) pipelines please reference the [pcf-pipelines](https://github.com/pivotal-cf/pcf-pipelines) repo maintined by the team from Pivotal. 
+For the most current base (opsmanager and ERT) pipelines please reference the [pcf-tile-automation](https://github.com/pivotal-cf/pcf-tile-automation) repo maintined by the team from Pivotal. 
 
 
 

@@ -20,7 +20,7 @@ image_resource:
   source: {repository: czero/cflinuxfs2}
 
 inputs:
-  - name: pcf-pipelines
+  - name: pcf-tile-automation
   - name: opsmgr-settings
 
 params:
@@ -31,4 +31,4 @@ params:
   OPSMAN_SETTINGS_FILENAME:
 
 run:
-  path: pcf-pipelines/tasks/import-opsmgr-settings/task.sh
+  path: pcf-tile-automation/tasks/import-opsmgr-settings/task.sh

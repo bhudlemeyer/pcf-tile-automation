@@ -7,7 +7,7 @@ image_resource:
     repository: czero/cflinuxfs2
 
 inputs:
-- name: pcf-pipelines 
+- name: pcf-tile-automation 
 - name: terraform-state
 
 outputs:
@@ -22,4 +22,4 @@ params:
   OPSMAN_PASSWORD:
 
 run:
-  path: pcf-pipelines/install-pcf/gcp/tasks/wipe-env/task.sh
+  path: pcf-tile-automation/install-pcf/gcp/tasks/wipe-env/task.sh

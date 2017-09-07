@@ -3,7 +3,7 @@ set -e
 
 root=$(pwd)
 
-source "${root}/pcf-pipelines/functions/check_opsman_available.sh"
+source "${root}/pcf-tile-automation/functions/check_opsman_available.sh"
 
 opsman_available=$(check_opsman_available $OPSMAN_URI)
 if [[ $opsman_available == "available" ]]; then

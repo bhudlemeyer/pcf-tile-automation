@@ -7,7 +7,7 @@ image_resource:
     repository: czero/cflinuxfs2
 
 inputs:
-- name: pcf-pipelines 
+- name: pcf-tile-automation 
 
 params:
   pcf_ert_domain:
@@ -15,4 +15,4 @@ params:
   pcf_opsman_admin_password:
 
 run:
-  path: pcf-pipelines/install-pcf/gcp/tasks/config-opsman-auth/task.sh
+  path: pcf-tile-automation/install-pcf/gcp/tasks/config-opsman-auth/task.sh

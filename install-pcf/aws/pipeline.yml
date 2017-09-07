@@ -25,10 +25,10 @@ resources:
     product_version: {{ert_major_minor_version}}
     sort_by: semver
 
-- name: pcf-pipelines
+- name: pcf-tile-automation
   type: git
   source:
-    uri: git@github.com:pivotal-cf/pcf-pipelines.git
+    uri: git@github.com:pivotal-cf/pcf-tile-automation.git
     branch: master
     private_key: {{git_private_key}}
 
@@ -45,7 +45,7 @@ jobs:
 - name: bootstrap-terraform-state
   serial_groups: [terraform]
   plan:
-  - get: pcf-pipelines
+  - get: pcf-tile-automation
   - task: create-terraform-state
     params:
       S3_BUCKET_TERRAFORM: {{S3_OUTPUT_BUCKET}}
@@ -53,13 +53,13 @@ jobs:
       S3_REGION: {{TF_VAR_aws_region}}
       AWS_ACCESS_KEY_ID: {{TF_VAR_aws_access_key}}
       AWS_SECRET_ACCESS_KEY: {{TF_VAR_aws_secret_key}}
-    file: pcf-pipelines/tasks/create-initial-terraform-state/task.yml
+    file: pcf-tile-automation/tasks/create-initial-terraform-state/task.yml
 
 - name: create-infrastructure
   serial_groups: [terraform]
   plan:
   - aggregate:
-    - get: pcf-pipelines 
+    - get: pcf-tile-automation 
     - get: terraform-state
     - get: pivnet-opsmgr
       params:
@@ -88,7 +88,7 @@ jobs:
           echo $ami > ami/ami
 
   - task: create-infrastructure
-    file: pcf-pipelines/install-pcf/aws/tasks/prepare-aws/task.yml
+    file: pcf-tile-automation/install-pcf/aws/tasks/prepare-aws/task.yml
     params:
       DB_MASTER_USERNAME: {{db_master_username}}
       DB_MASTER_PASSWORD: {{db_master_password}}
@@ -132,18 +132,18 @@ jobs:
   serial_groups: [opsman]
   plan:
   - aggregate:
-    - get: pcf-pipelines 
+    - get: pcf-tile-automation 
     - get: terraform-state
       trigger: true
       passed: [create-infrastructure]
   - task: configure-opsman-auth
-    file: pcf-pipelines/install-pcf/aws/tasks/config-opsman/task.yml
+    file: pcf-tile-automation/install-pcf/aws/tasks/config-opsman/task.yml
     params:
       ERT_DOMAIN: {{ERT_DOMAIN}}
       OPSMAN_USER: {{OPSMAN_USER}}
       OPSMAN_PASSWORD: {{OPSMAN_PASSWORD}}
   - task: configure-director
-    file: pcf-pipelines/install-pcf/aws/tasks/config-director/task.yml
+    file: pcf-tile-automation/install-pcf/aws/tasks/config-director/task.yml
     params:
       ERT_DOMAIN: {{ERT_DOMAIN}}
       OPSMAN_USER: {{OPSMAN_USER}}
@@ -165,12 +165,12 @@ jobs:
   serial_groups: [opsman]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: terraform-state
       trigger: true
       passed: [configure-director]
   - task: deploy-director
-    file: pcf-pipelines/install-pcf/aws/tasks/deploy-director/task.yml
+    file: pcf-tile-automation/install-pcf/aws/tasks/deploy-director/task.yml
     params:
       pcf_ert_domain: {{ERT_DOMAIN}}
       pcf_opsman_admin: {{OPSMAN_USER}}
@@ -180,7 +180,7 @@ jobs:
   serial_groups: [opsman]
   plan:
   - aggregate:
-    - get: pcf-pipelines 
+    - get: pcf-tile-automation 
     - get: pivnet-product
       resource: pivnet-elastic-runtime
       params:
@@ -190,7 +190,7 @@ jobs:
       trigger: true
       passed: [deploy-director]
   - task: upload-tile
-    file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
+    file: pcf-tile-automation/tasks/upload-product-and-stemcell/task.yml
     params:
       OPS_MGR_HOST: {{OPSMAN_URI}}
       OPS_MGR_USR: {{OPSMAN_USER}}
@@ -200,7 +200,7 @@ jobs:
       NO_PROXY: ""
       OM_IP: ""
   - task: stage-tile
-    file: pcf-pipelines/tasks/stage-product/task.yml
+    file: pcf-tile-automation/tasks/stage-product/task.yml
     params:
       OPSMAN_URI: {{OPSMAN_URI}}
       OPSMAN_USERNAME: {{OPSMAN_USER}}
@@ -211,13 +211,13 @@ jobs:
   serial_groups: [opsman]
   plan:
   - aggregate:
-    - get: pcf-pipelines 
+    - get: pcf-tile-automation 
     - get: terraform-state
       trigger: true
       passed: [upload-ert]
 
   - task: prepare-rds
-    file: pcf-pipelines/install-pcf/aws/tasks/prepare-rds/task.yml
+    file: pcf-tile-automation/install-pcf/aws/tasks/prepare-rds/task.yml
     params:
       PEM: {{PEM}}
       ERT_DOMAIN: {{ERT_DOMAIN}}
@@ -247,7 +247,7 @@ jobs:
       DB_SILK_PASSWORD: {{db_silk_password}}
 
   - task: configure-json
-    file: pcf-pipelines/tasks/install-ert/configure-json/task.yml
+    file: pcf-tile-automation/tasks/install-ert/configure-json/task.yml
     params:
       pcf_iaas: aws
       pcf_ert_domain: {{ERT_DOMAIN}}
@@ -305,7 +305,7 @@ jobs:
       db_silk_password: {{db_silk_password}}
 
   - task: configure-ert
-    file: pcf-pipelines/tasks/install-ert/configure-ert/task.yml
+    file: pcf-tile-automation/tasks/install-ert/configure-ert/task.yml
     params:
       pcf_iaas: aws
       pcf_ert_domain: {{ERT_DOMAIN}}
@@ -313,7 +313,7 @@ jobs:
       pcf_opsman_admin_passwd: {{OPSMAN_PASSWORD}}
 
   - task: disable-errands
-    file: pcf-pipelines/tasks/disable-errands/task.yml
+    file: pcf-tile-automation/tasks/disable-errands/task.yml
     params:
       PRODUCT_NAME: cf
       OPSMAN_URI: {{OPSMAN_URI}}
@@ -322,7 +322,7 @@ jobs:
       ERRANDS_TO_DISABLE: {{ert_errands_to_disable}}
 
   - task: deploy-ert
-    file: pcf-pipelines/tasks/apply-changes/task.yml
+    file: pcf-tile-automation/tasks/apply-changes/task.yml
     params:
       OPSMAN_URI: {{OPSMAN_URI}}
       OPSMAN_USERNAME: {{OPSMAN_USER}}
@@ -336,10 +336,10 @@ jobs:
       file: terraform-state/terraform.tfstate
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: terraform-state
   - task: wipe
-    file: pcf-pipelines/install-pcf/aws/tasks/wipe-env/task.yml
+    file: pcf-tile-automation/install-pcf/aws/tasks/wipe-env/task.yml
     params:
       OPSMAN_URI: {{OPSMAN_URI}}
       OPSMAN_USERNAME: {{OPSMAN_USER}}

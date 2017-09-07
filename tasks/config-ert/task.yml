@@ -116,7 +116,7 @@ params:
   SERVICE_PROVIDER_KEY:
 
 inputs:
-  - name: pcf-pipelines
+  - name: pcf-tile-automation
 
 run:
-  path: pcf-pipelines/tasks/config-ert/task.sh
+  path: pcf-tile-automation/tasks/config-ert/task.sh

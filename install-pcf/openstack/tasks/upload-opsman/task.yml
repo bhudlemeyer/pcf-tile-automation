@@ -8,7 +8,7 @@ image_resource:
 
 inputs:
 - name: ops-manager
-- name: pcf-pipelines
+- name: pcf-tile-automation
 
 params:
   OPENSTACK_CA_CERT:
@@ -25,4 +25,4 @@ params:
   OS_INTERFACE:
 
 run:
-  path: pcf-pipelines/install-pcf/openstack/tasks/upload-opsman/task.sh
+  path: pcf-tile-automation/install-pcf/openstack/tasks/upload-opsman/task.sh

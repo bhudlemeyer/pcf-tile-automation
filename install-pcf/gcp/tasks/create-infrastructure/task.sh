@@ -16,7 +16,7 @@ pcf_ert_ssl_key=$PCF_ERT_SSL_KEY
 
 if [[ ${PCF_ERT_SSL_CERT} == "generate" ]]; then
   echo "Generating Self Signed Certs for sys.${PCF_ERT_DOMAIN} & cfapps.${PCF_ERT_DOMAIN} ..."
-  pcf-pipelines/scripts/gen_ssl_certs.sh "sys.${PCF_ERT_DOMAIN}" "cfapps.${PCF_ERT_DOMAIN}"
+  pcf-tile-automation/scripts/gen_ssl_certs.sh "sys.${PCF_ERT_DOMAIN}" "cfapps.${PCF_ERT_DOMAIN}"
   pcf_ert_ssl_cert=$(cat sys.${PCF_ERT_DOMAIN}.crt)
   pcf_ert_ssl_key=$(cat sys.${PCF_ERT_DOMAIN}.key)
 fi
@@ -63,7 +63,7 @@ terraform plan \
   -var "db_silk_password=${DB_SILK_PASSWORD}" \
   -out terraform.tfplan \
   -state terraform-state/terraform.tfstate \
-  pcf-pipelines/install-pcf/gcp/terraform/$gcp_pcf_terraform_template
+  pcf-tile-automation/install-pcf/gcp/terraform/$gcp_pcf_terraform_template
 
 terraform apply \
   -state-out $root/create-infrastructure-output/terraform.tfstate \

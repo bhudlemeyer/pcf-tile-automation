@@ -6,7 +6,7 @@ image_resource:
     repository: czero/cflinuxfs2
 
 inputs:
-- name: pcf-pipelines
+- name: pcf-tile-automation
 
 params:
   PIPELINE_NAME:
@@ -18,4 +18,4 @@ params:
   ATC_TEAM_NAME:
 
 run:
-  path: pcf-pipelines/tasks/set-pipeline/task.sh
+  path: pcf-tile-automation/tasks/set-pipeline/task.sh

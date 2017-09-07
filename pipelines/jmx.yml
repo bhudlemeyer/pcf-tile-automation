@@ -53,7 +53,7 @@ jobs:
 - name: upload-ops-metrics-tile
   plan:
   - aggregate:
-    - get: pcf-tile-automations
+    - get: pcf-tile-automation
       trigger: true
     - get: pivnet-product
       resource: jmx-bridge
@@ -62,7 +62,7 @@ jobs:
       params: {globs: ["*linux-amd64*"]}
 
   - task: upload-tile
-    file: pcf-tile-automations/tasks/upload-product-and-stemcell/task.yml
+    file: pcf-tile-automation/tasks/upload-product-and-stemcell/task.yml
     attempts: 3
     params:
       OPS_MGR_HOST: {{opsman_uri}}
@@ -74,7 +74,7 @@ jobs:
       IAAS: {{iaas_type}}
 
   - task: stage-tile
-    file: pcf-tile-automations/tasks/stage-product/task.yml
+    file: pcf-tile-automation/tasks/stage-product/task.yml
     params:
       OPSMAN_USERNAME: {{opsman_admin_username}}
       OPSMAN_PASSWORD: {{opsman_admin_password}}
@@ -84,7 +84,7 @@ jobs:
 - name: config-ops-metrics-tile
   plan:
   - aggregate:
-    - get: pcf-tile-automations
+    - get: pcf-tile-automation
       trigger: true
       passed: [upload-ops-metrics-tile]
     - get: tool-om
@@ -92,7 +92,7 @@ jobs:
       passed: [upload-ops-metrics-tile]
 
   - task: config-ops-metrics-tile
-    file: pcf-tile-automations/tasks/config-ops-metrics/task.yml
+    file: pcf-tile-automation/tasks/config-ops-metrics/task.yml
     params:
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
@@ -112,7 +112,7 @@ jobs:
 #- name: product-apply-changes
 #  plan:
 #  - aggregate:
-#    - get: pcf-tile-automations
+#    - get: pcf-tile-automation
 #      trigger: true
 #      passed: [config-ops-metrics-tile]
 #    - get: tool-om
@@ -120,7 +120,7 @@ jobs:
 #      passed: [config-ops-metrics-tile]
 #
 #  - task: apply-changes
-#    file: pcf-tile-automations/tasks/apply-changes/task.yml
+#    file: pcf-tile-automation/tasks/apply-changes/task.yml
 #    attempts: 3
 #    params:
 #      OPSMAN_URI: {{opsman_uri}}

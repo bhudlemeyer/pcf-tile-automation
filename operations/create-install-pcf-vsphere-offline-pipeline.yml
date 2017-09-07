@@ -49,10 +49,10 @@
       unpack: true
 
 - op: remove
-  path: /name=pcf-pipelines
+  path: /name=pcf-tile-automation
 
 - op: remove
-  path: /get=pcf-pipelines-tarball
+  path: /get=pcf-tile-automation-tarball
 
 - op: remove
   path: /jobs/get=pivnet-opsman-product/params/globs

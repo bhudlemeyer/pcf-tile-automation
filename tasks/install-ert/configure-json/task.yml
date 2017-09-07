@@ -8,14 +8,14 @@ image_resource:
     repository: czero/cflinuxfs2
 
 inputs:
-  - name: pcf-pipelines 
+  - name: pcf-tile-automation 
   - name: terraform-state
 
 outputs:
   - name: json_file
 
 run:
-  path: pcf-pipelines/tasks/install-ert/configure-json/task.sh
+  path: pcf-tile-automation/tasks/install-ert/configure-json/task.sh
 
 params:
   pcf_iaas:

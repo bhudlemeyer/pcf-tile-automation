@@ -6,7 +6,7 @@ image_resource:
     repository: czero/cflinuxfs2
 
 inputs:
-- name: pcf-pipelines
+- name: pcf-tile-automation
 
 params:
   ATC_EXTERNAL_URL:
@@ -16,4 +16,4 @@ params:
   JOBS:
 
 run:
-  path: pcf-pipelines/tasks/trigger-jobs/task.sh
+  path: pcf-tile-automation/tasks/trigger-jobs/task.sh

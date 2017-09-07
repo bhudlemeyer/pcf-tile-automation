@@ -1,13 +1,13 @@
 resources:
-- name: pcf-pipelines
+- name: pcf-tile-automation
   type: git
   source:
-    uri: git@github.com:pivotal-cf/pcf-pipelines.git
+    uri: git@github.com:pivotal-cf/pcf-tile-automation.git
     branch: master
     private_key: {{git_private_key}}
     paths: [ci/Dockerfile]
 
-- name: pcf-pipelines-image
+- name: pcf-tile-automation-image
   type: docker-image
   source:
     repository: czero/cflinuxfs2
@@ -15,7 +15,7 @@ resources:
     username: czero
     password: {{czero_dockerhub_password}}
 
-- name: pcf-pipelines-image-rc
+- name: pcf-tile-automation-image-rc
   type: docker-image
   source:
     repository: czero/cflinuxfs2
@@ -93,11 +93,11 @@ resources:
     access_token: {{images_pipeline_github_token}}
 
 jobs:
-- name: build-pcf-pipelines-image
-  serial_groups: [pcf-pipelines-image]
+- name: build-pcf-tile-automation-image
+  serial_groups: [pcf-tile-automation-image]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
       trigger: true
     - get: cflinuxfs2
       trigger: true
@@ -128,7 +128,7 @@ jobs:
         type: docker-image
         source: {repository: czero/cflinuxfs2}
       inputs:
-      - name: pcf-pipelines
+      - name: pcf-tile-automation
       - name: om
       - name: yaml-patch 
       - name: cf-cli-tarball
@@ -145,7 +145,7 @@ jobs:
         args:
         - -c
         - |
-          cp pcf-pipelines/ci/Dockerfile workspace
+          cp pcf-tile-automation/ci/Dockerfile workspace
 
           cp om/om-linux workspace
           chmod +x workspace/om-linux
@@ -175,17 +175,17 @@ jobs:
           cp steamroll/steamroll_linux workspace/steamroll
           chmod +x workspace/steamroll
 
-  - put: pcf-pipelines-image-rc
+  - put: pcf-tile-automation-image-rc
     params:
       load_base: cflinuxfs2
       build: workspace
 
-- name: test-pcf-pipelines-image
-  serial_groups: [pcf-pipelines-image]
+- name: test-pcf-tile-automation-image
+  serial_groups: [pcf-tile-automation-image]
   plan:
-  - get: pcf-pipelines-image-rc
+  - get: pcf-tile-automation-image-rc
     trigger: true
-    passed: [build-pcf-pipelines-image]
+    passed: [build-pcf-tile-automation-image]
     params:
       skip_download: true
   - task: test-for-required-binaries
@@ -222,14 +222,14 @@ jobs:
           which steamroll
 
 - name: promote-image
-  serial_groups: [pcf-pipelines-image]
+  serial_groups: [pcf-tile-automation-image]
   plan:
-  - get: pcf-pipelines-image-rc
-    passed: [test-pcf-pipelines-image]
+  - get: pcf-tile-automation-image-rc
+    passed: [test-pcf-tile-automation-image]
     trigger: true
     params:
       save: true
-  - put: pcf-pipelines-image
+  - put: pcf-tile-automation-image
     params:
-      load: pcf-pipelines-image-rc
+      load: pcf-tile-automation-image-rc
       tag_as_latest: true

@@ -21,7 +21,7 @@ image_resource:
     repository: czero/cflinuxfs2
 
 inputs:
-- name: pcf-pipelines
+- name: pcf-tile-automation
 
 params:
   S3_BUCKET_TERRAFORM:
@@ -31,4 +31,4 @@ params:
   AWS_SECRET_ACCESS_KEY:
 
 run:
-  path: pcf-pipelines/tasks/create-initial-terraform-state/task.sh
+  path: pcf-tile-automation/tasks/create-initial-terraform-state/task.sh

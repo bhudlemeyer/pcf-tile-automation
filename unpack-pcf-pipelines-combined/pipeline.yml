@@ -28,14 +28,14 @@ resources:
     bucket: {{s3_bucket}}
     regexp: "czero-cflinuxfs2/czero-cflinuxfs2-(.*)-.*.tar"
 
-- name: pcf-pipelines-combined
+- name: pcf-tile-automation-combined
   type: s3
   source:
     access_key_id: {{s3_access_key_id}}
     secret_access_key: {{s3_secret_access_key}}
     endpoint: {{s3_endpoint}}
     bucket: {{s3_bucket}}
-    regexp: "pcf-pipelines-combined/pcf-pipelines-combined-(.*).tar"
+    regexp: "pcf-tile-automation-combined/pcf-tile-automation-combined-(.*).tar"
 
 - name: stemcells
   type: s3
@@ -46,19 +46,19 @@ resources:
     bucket: {{s3_bucket}}
     regexp: "stemcells/bosh-stemcell-(.*)-.*.tgz"
 
-- name: pcf-pipelines-tarball
+- name: pcf-tile-automation-tarball
   type: s3
   source:
     access_key_id: {{s3_access_key_id}}
     secret_access_key: {{s3_secret_access_key}}
     endpoint: {{s3_endpoint}}
     bucket: {{s3_bucket}}
-    regexp: "pcf-pipelines/pcf-pipelines-(.*).tgz"
+    regexp: "pcf-tile-automation/pcf-tile-automation-(.*).tgz"
 
 jobs:
 - name: unpack-tarball
   plan:
-  - get: pcf-pipelines-combined
+  - get: pcf-tile-automation-combined
   - task: unpack-tarball
     config:
       platform: linux
@@ -67,38 +67,38 @@ jobs:
         source:
           repository: czero/cflinuxfs2
       inputs:
-      - name: pcf-pipelines-combined
+      - name: pcf-tile-automation-combined
       outputs:
-      - name: pcf-pipelines-separated
+      - name: pcf-tile-automation-separated
       run:
         path: bash
         args:
         - -c
         - |
           set -eu
-          tar xvf pcf-pipelines-combined/*.tar -C pcf-pipelines-separated
+          tar xvf pcf-tile-automation-combined/*.tar -C pcf-tile-automation-separated
   - aggregate:
     - put: pcf-ops-manager
       params:
-        file: pcf-pipelines-separated/ops-manager*
+        file: pcf-tile-automation-separated/ops-manager*
     - put: elastic-runtime
       params:
-        file: pcf-pipelines-separated/elastic-runtime*
+        file: pcf-tile-automation-separated/elastic-runtime*
     - put: czero-cflinuxfs2
       params:
-        file: pcf-pipelines-separated/czero-cflinuxfs2*
+        file: pcf-tile-automation-separated/czero-cflinuxfs2*
     - put: stemcells
       params:
-        file: pcf-pipelines-separated/bosh-stemcell*
-    - put: pcf-pipelines-tarball
+        file: pcf-tile-automation-separated/bosh-stemcell*
+    - put: pcf-tile-automation-tarball
       params:
-        file: pcf-pipelines-separated/pcf-pipelines*
+        file: pcf-tile-automation-separated/pcf-tile-automation*
 
-- name: set-install-pcf-pipeline
+- name: set-install-pcf-tile-automation
   plan:
-  - get: pcf-pipelines-tarball
+  - get: pcf-tile-automation-tarball
     passed: [unpack-tarball]
-  - task: unpack-pcf-pipelines
+  - task: unpack-pcf-tile-automation
     config:
       platform: linux
       image_resource:
@@ -106,12 +106,12 @@ jobs:
         source:
           repository: czero/cflinuxfs2
       inputs:
-      - name: pcf-pipelines-tarball
+      - name: pcf-tile-automation-tarball
       outputs:
-      - name: pcf-pipelines
+      - name: pcf-tile-automation
       run:
        path: bash
-       args: ["-c", "tar -C pcf-pipelines -xvf pcf-pipelines-tarball/*.tgz"]
+       args: ["-c", "tar -C pcf-tile-automation -xvf pcf-tile-automation-tarball/*.tgz"]
   - task: set-pipeline
     config:
       platform: linux
@@ -119,11 +119,11 @@ jobs:
         type: docker-image
         source: { repository: czero/cflinuxfs2 }
       inputs:
-      - name: pcf-pipelines
+      - name: pcf-tile-automation
       params:
         PIPELINE_PARAMS: {{install_pcf_pipeline_params}}
         PIPELINE_NAME: {{install_pcf_pipeline_name}}
-        PIPELINE_PATH: pcf-pipelines/install-pcf/vsphere/pipeline.yml
+        PIPELINE_PATH: pcf-tile-automation/install-pcf/vsphere/pipeline.yml
         ATC_EXTERNAL_URL: {{atc_external_url}}
         ATC_BASIC_AUTH_USERNAME: {{atc_basic_auth_username}}
         ATC_BASIC_AUTH_PASSWORD: {{atc_basic_auth_password}}

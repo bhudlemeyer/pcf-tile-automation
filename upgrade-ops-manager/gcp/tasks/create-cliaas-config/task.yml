@@ -21,7 +21,7 @@ image_resource:
     repository: czero/cflinuxfs2
 
 inputs:
-  - name: pcf-pipelines
+  - name: pcf-tile-automation
   - name: pivnet-opsmgr
 
 outputs:
@@ -34,4 +34,4 @@ params:
   OPSMAN_GCP_CREDFILE_CONTENTS:
 
 run:
-  path: pcf-pipelines/upgrade-ops-manager/gcp/tasks/create-cliaas-config/task.sh
+  path: pcf-tile-automation/upgrade-ops-manager/gcp/tasks/create-cliaas-config/task.sh

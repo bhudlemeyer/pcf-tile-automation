@@ -6,7 +6,7 @@ image_resource:
   source:
     repository: czero/cflinuxfs2
 inputs:
-  - name: pcf-pipelines 
+  - name: pcf-tile-automation 
   - name: terraform-state
 params:
   ERT_DOMAIN:
@@ -25,4 +25,4 @@ params:
   services_subnet_reserved_ranges_z3:
   infra_subnet_reserved_ranges_z1:
 run:
-  path: pcf-pipelines/install-pcf/aws/tasks/config-director/task.sh
+  path: pcf-tile-automation/install-pcf/aws/tasks/config-director/task.sh

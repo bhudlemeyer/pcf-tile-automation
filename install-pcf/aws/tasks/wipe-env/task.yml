@@ -6,7 +6,7 @@ image_resource:
   source:
     repository: czero/cflinuxfs2
 inputs:
-  - name: pcf-pipelines 
+  - name: pcf-tile-automation 
   - name: terraform-state
 outputs:
   - name: terraform-state-output
@@ -41,4 +41,4 @@ params:
   OPSMAN_ALLOW_SSH_CIDR_RANGES:
   OPSMAN_ALLOW_HTTPS_CIDR_RANGES:
 run:
-  path: pcf-pipelines/install-pcf/aws/tasks/wipe-env/task.sh
+  path: pcf-tile-automation/install-pcf/aws/tasks/wipe-env/task.sh

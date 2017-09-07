@@ -20,10 +20,10 @@ resource_types:
     tag: latest-final
 
 resources:
-- name: pcf-pipelines
+- name: pcf-tile-automation
   type: git
   source:
-    uri: git@github.com:pivotal-cf/pcf-pipelines.git
+    uri: git@github.com:pivotal-cf/pcf-tile-automation.git
     branch: master
     private_key: {{git_private_key}}
 
@@ -147,14 +147,14 @@ jobs:
   serial_groups: [cc-api]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: buildpack
       resource: binary-buildpack
       trigger: true
       passed: [regulator]
 
   - task: stage
-    file: pcf-pipelines/tasks/stage-buildpack/task.yml
+    file: pcf-tile-automation/tasks/stage-buildpack/task.yml
     params:
       <<: *cf_api_params
       BUILDPACK_NAME: binary_buildpack_latest
@@ -167,9 +167,9 @@ jobs:
       trigger: true
       passed: [stage-binary-buildpack]
       params: {globs: []}
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
   - task: promote
-    file: pcf-pipelines/tasks/promote-buildpack/task.yml
+    file: pcf-tile-automation/tasks/promote-buildpack/task.yml
     params:
       <<: *cf_api_params
       SOURCE_BUILDPACK_NAME: binary_buildpack_latest
@@ -179,14 +179,14 @@ jobs:
   serial_groups: [cc-api]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: buildpack
       resource: dotnet-core-buildpack
       passed: [regulator]
       trigger: true
 
   - task: stage
-    file: pcf-pipelines/tasks/stage-buildpack/task.yml
+    file: pcf-tile-automation/tasks/stage-buildpack/task.yml
     params:
       <<: *cf_api_params
       BUILDPACK_NAME: dotnet_core_buildpack_offline_latest
@@ -199,9 +199,9 @@ jobs:
       trigger: true
       passed: [stage-dotnet-buildpack]
       params: {globs: []}
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
   - task: promote
-    file: pcf-pipelines/tasks/promote-buildpack/task.yml
+    file: pcf-tile-automation/tasks/promote-buildpack/task.yml
     params:
       <<: *cf_api_params
       SOURCE_BUILDPACK_NAME: dotnet_core_buildpack_offline_latest
@@ -211,14 +211,14 @@ jobs:
   serial_groups: [cc-api]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: buildpack
       resource: go-buildpack
       passed: [regulator]
       trigger: true
 
   - task: stage
-    file: pcf-pipelines/tasks/stage-buildpack/task.yml
+    file: pcf-tile-automation/tasks/stage-buildpack/task.yml
     params:
       <<: *cf_api_params
       BUILDPACK_NAME: go_buildpack_latest
@@ -231,9 +231,9 @@ jobs:
       passed: [stage-go-buildpack]
       trigger: true
       params: {globs: []}
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
   - task: promote
-    file: pcf-pipelines/tasks/promote-buildpack/task.yml
+    file: pcf-tile-automation/tasks/promote-buildpack/task.yml
     params:
       <<: *cf_api_params
       SOURCE_BUILDPACK_NAME: go_buildpack_latest
@@ -243,7 +243,7 @@ jobs:
   serial_groups: [cc-api]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: buildpack
       passed: [regulator]
       resource: java-buildpack
@@ -253,7 +253,7 @@ jobs:
         - "*offline*"
 
   - task: stage
-    file: pcf-pipelines/tasks/stage-buildpack/task.yml
+    file: pcf-tile-automation/tasks/stage-buildpack/task.yml
     params:
       <<: *cf_api_params
       BUILDPACK_NAME: java_buildpack_offline_latest
@@ -266,9 +266,9 @@ jobs:
       passed: [stage-java-buildpack]
       trigger: true
       params: {globs: []}
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
   - task: promote
-    file: pcf-pipelines/tasks/promote-buildpack/task.yml
+    file: pcf-tile-automation/tasks/promote-buildpack/task.yml
     params:
       <<: *cf_api_params
       SOURCE_BUILDPACK_NAME: java_buildpack_offline_latest
@@ -278,14 +278,14 @@ jobs:
   serial_groups: [cc-api]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: buildpack
       passed: [regulator]
       resource: nodejs-buildpack
       trigger: true
 
   - task: stage
-    file: pcf-pipelines/tasks/stage-buildpack/task.yml
+    file: pcf-tile-automation/tasks/stage-buildpack/task.yml
     params:
       <<: *cf_api_params
       BUILDPACK_NAME: nodejs_buildpack_latest
@@ -294,13 +294,13 @@ jobs:
   serial_groups: [cc-api]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: nodejs-buildpack
       passed: [stage-nodejs-buildpack]
       trigger: true
       params: {globs: []}
   - task: promote
-    file: pcf-pipelines/tasks/promote-buildpack/task.yml
+    file: pcf-tile-automation/tasks/promote-buildpack/task.yml
     params:
       <<: *cf_api_params
       SOURCE_BUILDPACK_NAME: nodejs_buildpack_latest
@@ -310,14 +310,14 @@ jobs:
   serial_groups: [cc-api]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: buildpack
       passed: [regulator]
       resource: php-buildpack
       trigger: true
 
   - task: stage
-    file: pcf-pipelines/tasks/stage-buildpack/task.yml
+    file: pcf-tile-automation/tasks/stage-buildpack/task.yml
     params:
       <<: *cf_api_params
       BUILDPACK_NAME: php_buildpack_latest
@@ -330,9 +330,9 @@ jobs:
       passed: [stage-php-buildpack]
       trigger: true
       params: {globs: []}
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
   - task: promote
-    file: pcf-pipelines/tasks/promote-buildpack/task.yml
+    file: pcf-tile-automation/tasks/promote-buildpack/task.yml
     params:
       <<: *cf_api_params
       SOURCE_BUILDPACK_NAME: php_buildpack_latest
@@ -342,14 +342,14 @@ jobs:
   serial_groups: [cc-api]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: buildpack
       passed: [regulator]
       resource: python-buildpack
       trigger: true
 
   - task: stage
-    file: pcf-pipelines/tasks/stage-buildpack/task.yml
+    file: pcf-tile-automation/tasks/stage-buildpack/task.yml
     params:
       <<: *cf_api_params
       BUILDPACK_NAME: python_buildpack_latest
@@ -362,9 +362,9 @@ jobs:
       passed: [stage-python-buildpack]
       trigger: true
       params: {globs: []}
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
   - task: promote
-    file: pcf-pipelines/tasks/promote-buildpack/task.yml
+    file: pcf-tile-automation/tasks/promote-buildpack/task.yml
     params:
       <<: *cf_api_params
       SOURCE_BUILDPACK_NAME: python_buildpack_latest
@@ -374,14 +374,14 @@ jobs:
   serial_groups: [cc-api]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: buildpack
       passed: [regulator]
       resource: ruby-buildpack
       trigger: true
 
   - task: stage
-    file: pcf-pipelines/tasks/stage-buildpack/task.yml
+    file: pcf-tile-automation/tasks/stage-buildpack/task.yml
     params:
       <<: *cf_api_params
       BUILDPACK_NAME: ruby_buildpack_latest
@@ -394,9 +394,9 @@ jobs:
       passed: [stage-ruby-buildpack]
       trigger: true
       params: {globs: []}
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
   - task: promote
-    file: pcf-pipelines/tasks/promote-buildpack/task.yml
+    file: pcf-tile-automation/tasks/promote-buildpack/task.yml
     params:
       <<: *cf_api_params
       SOURCE_BUILDPACK_NAME: ruby_buildpack_latest
@@ -406,14 +406,14 @@ jobs:
   serial_groups: [cc-api]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: buildpack
       passed: [regulator]
       resource: staticfile-buildpack
       trigger: true
 
   - task: stage
-    file: pcf-pipelines/tasks/stage-buildpack/task.yml
+    file: pcf-tile-automation/tasks/stage-buildpack/task.yml
     params:
       <<: *cf_api_params
       BUILDPACK_NAME: staticfile_buildpack_latest
@@ -426,9 +426,9 @@ jobs:
       passed: [stage-staticfile-buildpack]
       trigger: true
       params: {globs: []}
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
   - task: promote
-    file: pcf-pipelines/tasks/promote-buildpack/task.yml
+    file: pcf-tile-automation/tasks/promote-buildpack/task.yml
     params:
       <<: *cf_api_params
       SOURCE_BUILDPACK_NAME: staticfile_buildpack_latest
@@ -438,7 +438,7 @@ jobs:
   serial_groups: [cc-api]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: buildpack
       passed: [regulator]
       resource: tc-buildpack
@@ -448,7 +448,7 @@ jobs:
         - "*offline*"
 
   - task: stage
-    file: pcf-pipelines/tasks/stage-buildpack/task.yml
+    file: pcf-tile-automation/tasks/stage-buildpack/task.yml
     params:
       <<: *cf_api_params
       BUILDPACK_NAME: tc_buildpack_latest
@@ -461,10 +461,10 @@ jobs:
       passed: [stage-tcserver-buildpack]
       trigger: true
       params: {globs: []}
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
 
   - task: promote
-    file: pcf-pipelines/tasks/promote-buildpack/task.yml
+    file: pcf-tile-automation/tasks/promote-buildpack/task.yml
     params:
       <<: *cf_api_params
       SOURCE_BUILDPACK_NAME: tc_buildpack_latest

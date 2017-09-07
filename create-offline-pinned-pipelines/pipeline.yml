@@ -76,40 +76,40 @@ resources:
     secret_access_key: {{s3_secret_access_key}}
     endpoint: {{s3_endpoint}}
 
-- name: pcf-pipelines-tarball
+- name: pcf-tile-automation-tarball
   type: pivnet
   source:
     api_token: {{pivnet_token}}
     product_slug: pcf-automation
 
-- name: pcf-pipelines-combined-version
+- name: pcf-tile-automation-combined-version
   type: semver
   source:
     initial_version: 0.0.0
     driver: s3
     bucket: {{s3_bucket}}
-    key: "pcf-pipelines-combined/version"
+    key: "pcf-tile-automation-combined/version"
     access_key_id: {{s3_access_key_id}}
     secret_access_key: {{s3_secret_access_key}}
     endpoint: {{s3_endpoint}}
 
-- name: pcf-pipelines-s3
+- name: pcf-tile-automation-s3
   type: s3
   source:
     access_key_id: {{s3_access_key_id}}
     secret_access_key: {{s3_secret_access_key}}
     endpoint: {{s3_endpoint}}
     bucket: {{s3_bucket}}
-    regexp: "staging/pcf-pipelines/pcf-pipelines-v(.*).tgz"
+    regexp: "staging/pcf-tile-automation/pcf-tile-automation-v(.*).tgz"
 
-- name: pcf-pipelines-combined
+- name: pcf-tile-automation-combined
   type: s3
   source:
     access_key_id: {{s3_access_key_id}}
     secret_access_key: {{s3_secret_access_key}}
     endpoint: {{s3_endpoint}}
     bucket: {{s3_bucket}}
-    regexp: "pcf-pipelines-combined/pcf-pipelines-combined-(.*).tar"
+    regexp: "pcf-tile-automation-combined/pcf-tile-automation-combined-(.*).tar"
 
 - name: fly
   type: github-release
@@ -135,9 +135,9 @@ jobs:
       params: { globs: [] }
     - get: fly
     - do:
-      - get: pcf-pipelines-tarball
+      - get: pcf-tile-automation-tarball
         trigger: true
-      - task: unpack-pcf-pipelines
+      - task: unpack-pcf-tile-automation
         config:
           platform: linux
           image_resource:
@@ -145,12 +145,12 @@ jobs:
             source:
               repository: czero/cflinuxfs2
           inputs:
-          - name: pcf-pipelines-tarball
+          - name: pcf-tile-automation-tarball
           outputs:
-          - name: pcf-pipelines
+          - name: pcf-tile-automation
           run:
            path: bash
-           args: ["-c", "tar -xvzf pcf-pipelines-tarball/*.tgz"]
+           args: ["-c", "tar -xvzf pcf-tile-automation-tarball/*.tgz"]
   - task: create-pipelines
     config:
       platform: linux
@@ -162,11 +162,11 @@ jobs:
       - name: czero-cflinuxfs2-version
       - name: operations-manager-pivnet
       - name: elastic-runtime-pivnet
-      - name: pcf-pipelines-tarball
-      - name: pcf-pipelines
+      - name: pcf-tile-automation-tarball
+      - name: pcf-tile-automation
       - name: fly
       outputs:
-      - name: pcf-pipelines-offline-pinned-tarball
+      - name: pcf-tile-automation-offline-pinned-tarball
       run:
         path: bash
         args:
@@ -188,14 +188,14 @@ jobs:
           )
           czero_cflinuxfs2_version=$(cat czero-cflinuxfs2-version/version)
           pcf_pipelines_version=$(
-            cat pcf-pipelines-tarball/metadata.json | jq --raw-output '.Release.Version'
+            cat pcf-tile-automation-tarball/metadata.json | jq --raw-output '.Release.Version'
           )
 
           echo "Pinning gets of resources to specific versions:"
           echo "  ops-manager -> ${opsman_version}"
           echo "  elastic-runtime -> ${ert_version}"
           echo "  czero-cflinuxfs2 -> ${czero_cflinuxfs2_version}"
-          echo "  pcf-pipelines -> ${pcf_pipelines_version}"
+          echo "  pcf-tile-automation -> ${pcf_pipelines_version}"
           echo
 
           cat > pin-resource-gets.yml <<EOF
@@ -217,48 +217,48 @@ jobs:
               path: "czero-cflinuxfs2/czero-cflinuxfs2-(${czero_cflinuxfs2_version})-.*.tar"
           EOF
 
-          mkdir -p pcf-pipelines-offline-pinned/install-pcf/vsphere
+          mkdir -p pcf-tile-automation-offline-pinned/install-pcf/vsphere
 
           echo "Creating install-pcf/vsphere/pipeline.yml"
           fly fmt -c <(
-            cat pcf-pipelines/install-pcf/vsphere/offline/pipeline.yml |
+            cat pcf-tile-automation/install-pcf/vsphere/offline/pipeline.yml |
               yaml_patch_linux -o pin-resource-gets.yml
-          ) > pcf-pipelines-offline-pinned/install-pcf/vsphere/pipeline.yml
+          ) > pcf-tile-automation-offline-pinned/install-pcf/vsphere/pipeline.yml
 
           pcf_pipelines_version=$(
-            cat pcf-pipelines-tarball/metadata.json | jq --raw-output '.Release.Version'
+            cat pcf-tile-automation-tarball/metadata.json | jq --raw-output '.Release.Version'
           )
 
           echo "Creating install-pcf/vsphere/params.yml"
-          cp pcf-pipelines/install-pcf/vsphere/offline/params.yml \
-            pcf-pipelines-offline-pinned/install-pcf/vsphere/params.yml
+          cp pcf-tile-automation/install-pcf/vsphere/offline/params.yml \
+            pcf-tile-automation-offline-pinned/install-pcf/vsphere/params.yml
 
-          echo "Creating unpack-pcf-pipelines-combined/pipeline.yml"
+          echo "Creating unpack-pcf-tile-automation-combined/pipeline.yml"
           cat > steamroll_config.yml <<EOF
           resource_map:
-            "pcf-pipelines": $root/pcf-pipelines
+            "pcf-tile-automation": $root/pcf-tile-automation
           EOF
-          mkdir -p pcf-pipelines-offline-pinned/unpack-pcf-pipelines-combined
+          mkdir -p pcf-tile-automation-offline-pinned/unpack-pcf-tile-automation-combined
           fly fmt -c <(
-            steamroll -p pcf-pipelines/unpack-pcf-pipelines-combined/pipeline.yml -c steamroll_config.yml
-          ) > pcf-pipelines-offline-pinned/unpack-pcf-pipelines-combined/pipeline.yml
+            steamroll -p pcf-tile-automation/unpack-pcf-tile-automation-combined/pipeline.yml -c steamroll_config.yml
+          ) > pcf-tile-automation-offline-pinned/unpack-pcf-tile-automation-combined/pipeline.yml
 
-          echo "Creating unpack-pcf-pipelines-combined/params.yml"
-          cp pcf-pipelines/unpack-pcf-pipelines-combined/params.yml \
-            pcf-pipelines-offline-pinned/unpack-pcf-pipelines-combined/params.yml
+          echo "Creating unpack-pcf-tile-automation-combined/params.yml"
+          cp pcf-tile-automation/unpack-pcf-tile-automation-combined/params.yml \
+            pcf-tile-automation-offline-pinned/unpack-pcf-tile-automation-combined/params.yml
 
           echo "Creating offline pinned tarball"
           tar czv \
-          -f "pcf-pipelines-offline-pinned-tarball/pcf-pipelines-${pcf_pipelines_version}.tgz" \
-          -C pcf-pipelines-offline-pinned \
+          -f "pcf-tile-automation-offline-pinned-tarball/pcf-tile-automation-${pcf_pipelines_version}.tgz" \
+          -C pcf-tile-automation-offline-pinned \
           .
-  - put: pcf-pipelines-s3
+  - put: pcf-tile-automation-s3
     params:
-      file: "pcf-pipelines-offline-pinned-tarball/*.tgz"
+      file: "pcf-tile-automation-offline-pinned-tarball/*.tgz"
 
 - name: create-ops-manager-tarball
   plan:
-  - get: pcf-pipelines-s3
+  - get: pcf-tile-automation-s3
     trigger: true
     passed: [create-offline-pinned-pipelines]
   - get: operations-manager-pivnet
@@ -293,7 +293,7 @@ jobs:
 
 - name: create-elastic-runtime-tarball
   plan:
-  - get: pcf-pipelines-s3
+  - get: pcf-tile-automation-s3
     trigger: true
     passed: [create-offline-pinned-pipelines]
   - get: elastic-runtime-pivnet
@@ -364,7 +364,7 @@ jobs:
 - name: create-czero-cflinuxfs2-tarball
   plan:
   - aggregate:
-    - get: pcf-pipelines-s3
+    - get: pcf-tile-automation-s3
       trigger: true
       passed: [create-offline-pinned-pipelines]
     - get: czero-cflinuxfs2
@@ -401,16 +401,16 @@ jobs:
     params:
       file: "czero-cflinuxfs2-tarball/czero-cflinuxfs2-*.tar"
 
-- name: create-pcf-pipelines-combined
+- name: create-pcf-tile-automation-combined
   plan:
   - aggregate:
-    - get: pcf-pipelines-s3
+    - get: pcf-tile-automation-s3
       trigger: true
       passed:
       - create-czero-cflinuxfs2-tarball
       - create-ops-manager-tarball
       - create-elastic-runtime-tarball
-    - get: pcf-pipelines-combined-version
+    - get: pcf-tile-automation-combined-version
       params: { bump: major }
     - get: czero-cflinuxfs2-s3
       passed: [create-czero-cflinuxfs2-tarball]
@@ -427,14 +427,14 @@ jobs:
         type: docker-image
         source: {repository: czero/cflinuxfs2}
       inputs:
-      - name: pcf-pipelines-s3
-      - name: pcf-pipelines-combined-version
+      - name: pcf-tile-automation-s3
+      - name: pcf-tile-automation-combined-version
       - name: czero-cflinuxfs2-s3
       - name: operations-manager-s3
       - name: elastic-runtime-s3
       - name: stemcells-s3
       outputs:
-      - name: pcf-pipelines-combined
+      - name: pcf-tile-automation-combined
       run:
         path: bash
         args:
@@ -442,28 +442,28 @@ jobs:
         - |
           set -eu
 
-          mkdir -p pcf-pipelines-combined-contents
+          mkdir -p pcf-tile-automation-combined-contents
 
           mv \
             czero-cflinuxfs2-s3/*.tar \
             operations-manager-s3/*.tar \
             elastic-runtime-s3/*.tar \
             stemcells-s3/*.tgz \
-            pcf-pipelines-s3/*.tgz \
-            pcf-pipelines-combined-contents
+            pcf-tile-automation-s3/*.tgz \
+            pcf-tile-automation-combined-contents
 
-          pushd pcf-pipelines-combined-contents
+          pushd pcf-tile-automation-combined-contents
             shasum * > MANIFEST.MF
           popd
 
-          version=$(cat pcf-pipelines-combined-version/version)
+          version=$(cat pcf-tile-automation-combined-version/version)
 
           tar cv \
-          -f "pcf-pipelines-combined/pcf-pipelines-combined-${version}.tar" \
-          -C pcf-pipelines-combined-contents \
+          -f "pcf-tile-automation-combined/pcf-tile-automation-combined-${version}.tar" \
+          -C pcf-tile-automation-combined-contents \
           .
-  - put: pcf-pipelines-combined
+  - put: pcf-tile-automation-combined
     params:
-      file: "pcf-pipelines-combined/*.tar"
-  - put: pcf-pipelines-combined-version
+      file: "pcf-tile-automation-combined/*.tar"
+  - put: pcf-tile-automation-combined-version
     params: { bump: major }

@@ -2,7 +2,7 @@
 
 set -e
 
-json_file_path="pcf-pipelines/tasks/install-ert/json_templates/${pcf_iaas}/${terraform_template}"
+json_file_path="pcf-tile-automation/tasks/install-ert/json_templates/${pcf_iaas}/${terraform_template}"
 json_file_template="${json_file_path}/ert-template.json"
 
 if [ ! -f "$json_file_template" ]; then
@@ -14,7 +14,7 @@ json_file="json_file/ert.json"
 
 cp ${json_file_template} ${json_file}
 
-source pcf-pipelines/functions/generate_cert.sh
+source pcf-tile-automation/functions/generate_cert.sh
 
 OPS_MGR_HOST="opsman.$pcf_ert_domain"
 OPS_MGR_USR="$pcf_opsman_admin"
@@ -155,7 +155,7 @@ do
    sed -i -e "s/$templateplaceholder/${varvalue}/g" ${json_file}
 done
 
-if [[ -e pcf-pipelines/tasks/install-ert/scripts/iaas-specific-config/${pcf_iaas}/run.sh ]]; then
+if [[ -e pcf-tile-automation/tasks/install-ert/scripts/iaas-specific-config/${pcf_iaas}/run.sh ]]; then
   echo "Executing ${pcf_iaas} IaaS specific config ..."
-  ./pcf-pipelines/tasks/install-ert/scripts/iaas-specific-config/${pcf_iaas}/run.sh
+  ./pcf-tile-automation/tasks/install-ert/scripts/iaas-specific-config/${pcf_iaas}/run.sh
 fi

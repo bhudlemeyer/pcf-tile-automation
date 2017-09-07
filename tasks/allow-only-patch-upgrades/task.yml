@@ -20,7 +20,7 @@ image_resource:
   source: {repository: czero/cflinuxfs2}
 
 inputs:
-  - name: pcf-pipelines
+  - name: pcf-tile-automation
   - name: product-files
 
 params:
@@ -30,4 +30,4 @@ params:
   PRODUCT_NAME:
 
 run:
-  path: pcf-pipelines/tasks/allow-only-patch-upgrades/task.sh
+  path: pcf-tile-automation/tasks/allow-only-patch-upgrades/task.sh

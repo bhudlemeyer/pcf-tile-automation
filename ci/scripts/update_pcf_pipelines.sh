@@ -44,15 +44,15 @@ write_params $tmpfile "" "install_pcf_vsphere_slot1_params" 'vsphere-slot1/insta
 write_params $tmpfile "" "upgrade_ert_vsphere_slot1_params" 'vsphere-slot1/upgrade-ert-params'
 write_params $tmpfile "" "upgrade_ops_manager_vsphere_slot1_params" 'vsphere-slot1/upgrade-ops-manager-params'
 write_params $tmpfile "" "create_offline_pinned_pipelines_params" 'create-offline-pinned-pipelines-params'
-write_params $tmpfile "" "unpack_pcf_pipelines_combined_params" 'unpack-pcf-pipelines-combined-params'
+write_params $tmpfile "" "unpack_pcf_pipelines_combined_params" 'unpack-pcf-tile-automation-combined-params'
 write_params $tmpfile "  " "install_pcf_pipeline_params" 'vsphere-slot6/install-pcf-params'
 cat >> $tmpfile <<EOF
   install_pcf_pipeline_name: install-pcf-vsphere-darknet-current
 EOF
 
-fly -tlrp3 sp -p pcf-pipelines -c ci/pcf-pipelines/pipeline.yml \
+fly -tlrp3 sp -p pcf-tile-automation -c ci/pcf-tile-automation/pipeline.yml \
   -l $tmpfile \
-  -l <(lpass show pcf-pipelines-params --notes) \
+  -l <(lpass show pcf-tile-automation-params --notes) \
   -l <(lpass show czero-github --notes) \
   -l <(lpass show czero-pivnet --notes) \
   -l <(lpass show minio-lrpiec03 --notes)

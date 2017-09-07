@@ -10,7 +10,7 @@ terraform plan \
   -var route53_domain=$ROUTE53_DOMAIN \
   -var route53_zone_id=$ROUTE53_ZONE_ID \
   -out terraform.tfplan \
-  pcf-pipelines/ci/bootstrap/aws/terraform
+  pcf-tile-automation/ci/bootstrap/aws/terraform
 
 terraform apply -state-out terraform.tfstate terraform.tfplan
 

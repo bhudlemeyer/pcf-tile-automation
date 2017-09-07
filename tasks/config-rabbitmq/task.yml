@@ -30,8 +30,8 @@ params:
   SERVICE_NETWORK:
 
 inputs:
-  - name: pcf-pipelines
+  - name: pcf-tile-automation
   - name: tool-om
 
 run:
-  path: pcf-pipelines/tasks/config-rabbitmq/task.sh
+  path: pcf-tile-automation/tasks/config-rabbitmq/task.sh

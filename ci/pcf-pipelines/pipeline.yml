@@ -12,10 +12,10 @@ resource_types:
     tag: latest
 
 resources:
-- name: pcf-pipelines
+- name: pcf-tile-automation
   type: git
   source:
-    uri: git@github.com:pivotal-cf/pcf-pipelines.git
+    uri: git@github.com:pivotal-cf/pcf-tile-automation.git
     branch: master
     private_key: {{git_private_key}}
 
@@ -41,7 +41,7 @@ resources:
   source:
     driver: git
     initial_version: 0.1.0-rc.1
-    uri: git@github.com:pivotal-cf/pcf-pipelines.git
+    uri: git@github.com:pivotal-cf/pcf-tile-automation.git
     private_key: {{git_private_key}}
     branch: version
     file: version
@@ -77,13 +77,13 @@ jobs:
     <<: *notify_slack
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
       trigger: true
   - aggregate:
     - task: test-pipeline-yaml
-      file: pcf-pipelines/ci/tasks/test.yml
+      file: pcf-tile-automation/ci/tasks/test.yml
     - task: test-bash-functions 
-      file: pcf-pipelines/ci/tasks/test_bash.yml
+      file: pcf-tile-automation/ci/tasks/test_bash.yml
 
 - name: publish-rc
   serial_groups: [version]
@@ -91,7 +91,7 @@ jobs:
     <<: *notify_slack
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
       passed: [test]
     - get: fly
 
@@ -99,19 +99,19 @@ jobs:
     params: {pre: rc}
 
   - task: create-release
-    file: pcf-pipelines/ci/tasks/create_release.yml
+    file: pcf-tile-automation/ci/tasks/create_release.yml
     params:
       AVAILABILITY: Admins Only
 
   - put: pivnet-rc
     params:
       metadata_file: pivnet-metadata/metadata.yml
-      file_glob: pcf-pipelines-release-tarball/*.tgz
+      file_glob: pcf-tile-automation-release-tarball/*.tgz
       s3_filepath_prefix: {{pivnet_s3_filepath_prefix}}
 
-  - put: pcf-pipelines
+  - put: pcf-tile-automation
     params:
-      repository: pcf-pipelines
+      repository: pcf-tile-automation
       tag: version/version
       tag_prefix: v
       only_tag: true
@@ -123,7 +123,7 @@ jobs:
   - aggregate:
     - get: version
     - get: src
-      resource: pcf-pipelines
+      resource: pcf-tile-automation
       passed: [publish-rc]
     - do:
       - get: pivnet-rc
@@ -132,7 +132,7 @@ jobs:
       - task: unpack-rc
         file: src/ci/tasks/unpack_tarball.yml
         input_mapping: { tarball: pivnet-rc }
-        output_mapping: { unpacked_tarball: pcf-pipelines-release }
+        output_mapping: { unpacked_tarball: pcf-tile-automation-release }
 
   - task: prepare-workspace
     config:
@@ -142,16 +142,16 @@ jobs:
         source: {repository: czero/cflinuxfs2}
       inputs:
       - name: src
-      - name: pcf-pipelines-release
+      - name: pcf-tile-automation-release
       outputs:
-      - name: pcf-pipelines
+      - name: pcf-tile-automation
       run:
         path: bash
         args:
         - -c
         - |
-          cp -r src/*.go pcf-pipelines
-          cp -r pcf-pipelines-release/pcf-pipelines/* pcf-pipelines
+          cp -r src/*.go pcf-tile-automation
+          cp -r pcf-tile-automation-release/pcf-tile-automation/* pcf-tile-automation
 
   - task: test
     file: src/ci/tasks/test.yml
@@ -163,14 +163,14 @@ jobs:
   - aggregate:
     - get: version
       passed: [test-rc]
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
       passed: [test-rc]
     - get: pivnet-rc
       trigger: true
       passed: [test-rc]
 
   - task: unpack-rc
-    file: pcf-pipelines/ci/tasks/unpack_tarball.yml
+    file: pcf-tile-automation/ci/tasks/unpack_tarball.yml
     input_mapping: { tarball: pivnet-rc }
     output_mapping: { unpacked_tarball: release }
 
@@ -179,73 +179,73 @@ jobs:
       params:
         PIPELINE_PARAMS: {{install_pcf_aws_current_params}}
         PIPELINE_NAME: install-pcf-aws-current
-        PIPELINE_PATH: release/pcf-pipelines/install-pcf/aws/pipeline.yml
+        PIPELINE_PATH: release/pcf-tile-automation/install-pcf/aws/pipeline.yml
         <<: *atc_creds
-      file: pcf-pipelines/ci/tasks/set_pipeline.yml
+      file: pcf-tile-automation/ci/tasks/set_pipeline.yml
 
     - task: set-upgrade-ert-aws-current-pipeline
       params:
         PIPELINE_PARAMS: {{upgrade_ert_aws_current_params}}
         PIPELINE_NAME: upgrade-ert-aws-current
-        PIPELINE_PATH: release/pcf-pipelines/upgrade-ert/pipeline.yml
+        PIPELINE_PATH: release/pcf-tile-automation/upgrade-ert/pipeline.yml
         <<: *atc_creds
-      file: pcf-pipelines/ci/tasks/set_pipeline.yml
+      file: pcf-tile-automation/ci/tasks/set_pipeline.yml
 
     - task: set-install-pcf-gcp-current-pipeline
       params:
         PIPELINE_PARAMS: {{install_pcf_gcp_current_params}}
         PIPELINE_NAME: install-pcf-gcp-current
-        PIPELINE_PATH: release/pcf-pipelines/install-pcf/gcp/pipeline.yml
+        PIPELINE_PATH: release/pcf-tile-automation/install-pcf/gcp/pipeline.yml
         <<: *atc_creds
-      file: pcf-pipelines/ci/tasks/set_pipeline.yml
+      file: pcf-tile-automation/ci/tasks/set_pipeline.yml
 
     - task: set-upgrade-ert-gcp-current-pipeline
       params:
         PIPELINE_PARAMS: {{upgrade_ert_gcp_current_params}}
         PIPELINE_NAME: upgrade-ert-gcp-current
-        PIPELINE_PATH: release/pcf-pipelines/upgrade-ert/pipeline.yml
+        PIPELINE_PATH: release/pcf-tile-automation/upgrade-ert/pipeline.yml
         <<: *atc_creds
-      file: pcf-pipelines/ci/tasks/set_pipeline.yml
+      file: pcf-tile-automation/ci/tasks/set_pipeline.yml
 
     - task: set-install-pcf-slot1-current-pipeline
       params:
         PIPELINE_PARAMS: {{install_pcf_vsphere_slot1_params}}
         PIPELINE_NAME: install-pcf-slot1-current
-        PIPELINE_PATH: release/pcf-pipelines/install-pcf/vsphere/pipeline.yml
+        PIPELINE_PATH: release/pcf-tile-automation/install-pcf/vsphere/pipeline.yml
         <<: *atc_creds
-      file: pcf-pipelines/ci/tasks/set_pipeline.yml
+      file: pcf-tile-automation/ci/tasks/set_pipeline.yml
 
     - task: set-upgrade-ert-slot1-current-pipeline
       params:
         PIPELINE_PARAMS: {{upgrade_ert_vsphere_slot1_params}}
         PIPELINE_NAME: upgrade-ert-slot1-current
-        PIPELINE_PATH: release/pcf-pipelines/upgrade-ert/pipeline.yml
+        PIPELINE_PATH: release/pcf-tile-automation/upgrade-ert/pipeline.yml
         <<: *atc_creds
-      file: pcf-pipelines/ci/tasks/set_pipeline.yml
+      file: pcf-tile-automation/ci/tasks/set_pipeline.yml
 
     - task: set-upgrade-ops-manager-slot1-current-pipeline
       params:
         PIPELINE_PARAMS: {{upgrade_ops_manager_vsphere_slot1_params}}
         PIPELINE_NAME: upgrade-ops-manager-slot1-current
-        PIPELINE_PATH: release/pcf-pipelines/upgrade-ops-manager/vsphere/pipeline.yml
+        PIPELINE_PATH: release/pcf-tile-automation/upgrade-ops-manager/vsphere/pipeline.yml
         <<: *atc_creds
-      file: pcf-pipelines/ci/tasks/set_pipeline.yml
+      file: pcf-tile-automation/ci/tasks/set_pipeline.yml
 
     - task: set-create-offline-pinned-pipelines-pipeline
       params:
         PIPELINE_PARAMS: {{create_offline_pinned_pipelines_params}}
         PIPELINE_NAME: create-offline-pinned-pipelines
-        PIPELINE_PATH: release/pcf-pipelines/create-offline-pinned-pipelines/pipeline.yml
+        PIPELINE_PATH: release/pcf-tile-automation/create-offline-pinned-pipelines/pipeline.yml
         <<: *atc_creds
-      file: pcf-pipelines/ci/tasks/set_pipeline.yml
+      file: pcf-tile-automation/ci/tasks/set_pipeline.yml
 
-    - task: set-unpack-pcf-pipelines-combined
+    - task: set-unpack-pcf-tile-automation-combined
       params:
         PIPELINE_PARAMS: {{unpack_pcf_pipelines_combined_params}}
-        PIPELINE_NAME: unpack-pcf-pipelines-combined
-        PIPELINE_PATH: release/pcf-pipelines/unpack-pcf-pipelines-combined/pipeline.yml
+        PIPELINE_NAME: unpack-pcf-tile-automation-combined
+        PIPELINE_PATH: release/pcf-tile-automation/unpack-pcf-tile-automation-combined/pipeline.yml
         <<: *atc_creds
-      file: pcf-pipelines/ci/tasks/set_pipeline.yml
+      file: pcf-tile-automation/ci/tasks/set_pipeline.yml
 
 - name: publish-release
   serial_groups: [version]
@@ -254,24 +254,24 @@ jobs:
     - get: version
       passed: [update-pipelines]
       params: {bump: final}
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
       passed: [update-pipelines]
     - get: fly
 
   - task: create-release
-    file: pcf-pipelines/ci/tasks/create_release.yml
+    file: pcf-tile-automation/ci/tasks/create_release.yml
     params:
       AVAILABILITY: Selected User Groups Only
 
   - put: pivnet-release
     params:
       metadata_file: pivnet-metadata/metadata.yml
-      file_glob: pcf-pipelines-release-tarball/*.tgz
+      file_glob: pcf-tile-automation-release-tarball/*.tgz
       s3_filepath_prefix: {{pivnet_s3_filepath_prefix}}
 
-  - put: pcf-pipelines
+  - put: pcf-tile-automation
     params:
-      repository: pcf-pipelines
+      repository: pcf-tile-automation
       tag: version/version
       tag_prefix: v
       only_tag: true
@@ -301,7 +301,7 @@ jobs:
 
             release_id=$(cat pivnet-release/metadata.json | jq .Release.ID)
             cat > notification-text/text <<EOF
-              Deployed pcf-pipelines final release to https://network.pivotal.io/products/pcf-automation#/releases/$release_id
+              Deployed pcf-tile-automation final release to https://network.pivotal.io/products/pcf-automation#/releases/$release_id
             EOF
     - put: slack
       params:

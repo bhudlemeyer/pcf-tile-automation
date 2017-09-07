@@ -20,10 +20,10 @@ resource_types:
     tag: latest-final
 
 resources:
-- name: pcf-pipelines
+- name: pcf-tile-automation
   type: git
   source:
-    uri: git@github.com:pivotal-cf/pcf-pipelines.git
+    uri: git@github.com:pivotal-cf/pcf-tile-automation.git
     branch: master
     private_key: {{git_private_key}}
 
@@ -62,10 +62,10 @@ jobs:
       trigger: true
       params:
         globs: ["*.ova"]
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
 
   - task: allow-patch-release-only-check
-    file: pcf-pipelines/tasks/allow-only-patch-upgrades/task.yml
+    file: pcf-tile-automation/tasks/allow-only-patch-upgrades/task.yml
     params:
       OPSMAN_USERNAME: {{opsman_admin_username}}
       OPSMAN_PASSWORD: {{opsman_admin_password}}
@@ -80,10 +80,10 @@ jobs:
       passed: [confirm-compatible-version]
       params:
         globs: ["*.ova"]
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
 
   - task: wait-opsman-clear
-    file: pcf-pipelines/tasks/wait-opsman-clear/task.yml
+    file: pcf-tile-automation/tasks/wait-opsman-clear/task.yml
     params:
       OPSMAN_USERNAME: {{opsman_admin_username}}
       OPSMAN_PASSWORD: {{opsman_admin_password}}
@@ -91,7 +91,7 @@ jobs:
 
   - aggregate:
     - task: export-opsmgr-settings
-      file: pcf-pipelines/tasks/export-opsmgr-settings/task.yml
+      file: pcf-tile-automation/tasks/export-opsmgr-settings/task.yml
       params:
         OPSMAN_USERNAME: {{opsman_admin_username}}
         OPSMAN_PASSWORD: {{opsman_admin_password}}
@@ -100,14 +100,14 @@ jobs:
         OPSMAN_EXPORT_TIMEOUT: {{opsman_export_timeout}}
 
     - task: exported-opsmgr-diagnostic-report
-      file: pcf-pipelines/tasks/export-opsmgr-diagnostic-report/task.yml
+      file: pcf-tile-automation/tasks/export-opsmgr-diagnostic-report/task.yml
       params:
         OPSMAN_USERNAME: {{opsman_admin_username}}
         OPSMAN_PASSWORD: {{opsman_admin_password}}
         OPSMAN_URI: {{opsman_uri}}
 
   - task: deploy-opsman-vm
-    file: pcf-pipelines/tasks/deploy-opsman-vm/task.yml
+    file: pcf-tile-automation/tasks/deploy-opsman-vm/task.yml
     params:
       OPSMAN_TIMEOUT: {{opsman_timeout_seconds}}
       GOVC_USERNAME: {{vcenter_username}}
@@ -128,7 +128,7 @@ jobs:
       OPSMAN_SSH_PASSWORD: {{opsman_ssh_password}}
 
   - task: import-opsmgr
-    file: pcf-pipelines/tasks/import-opsmgr-settings/task.yml
+    file: pcf-tile-automation/tasks/import-opsmgr-settings/task.yml
     params:
       OPSMAN_USERNAME: {{opsman_admin_username}}
       OPSMAN_PASSWORD: {{opsman_admin_password}}
@@ -137,20 +137,20 @@ jobs:
       OPSMAN_SETTINGS_FILENAME: installation.zip
 
   - task: download-stemcells
-    file: pcf-pipelines/tasks/download-pivnet-stemcells/task.yml
+    file: pcf-tile-automation/tasks/download-pivnet-stemcells/task.yml
     params:
       API_TOKEN: {{pivnet_token}}
       IAAS_TYPE: vsphere
 
   - task: restore-stemcells
-    file: pcf-pipelines/tasks/restore-stemcells/task.yml
+    file: pcf-tile-automation/tasks/restore-stemcells/task.yml
     params:
       OPSMAN_USERNAME: {{opsman_admin_username}}
       OPSMAN_PASSWORD: {{opsman_admin_password}}
       OPSMAN_URI: {{opsman_uri}}
 
   - task: apply-changes
-    file: pcf-pipelines/tasks/apply-changes/task.yml
+    file: pcf-tile-automation/tasks/apply-changes/task.yml
     params:
       OPSMAN_USERNAME: {{opsman_admin_username}}
       OPSMAN_PASSWORD: {{opsman_admin_password}}

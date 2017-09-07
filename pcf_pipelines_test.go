@@ -18,7 +18,7 @@ import (
 
 var placeholderRegexp = regexp.MustCompile("{{([a-zA-Z0-9-_]+)}}")
 
-var _ = Describe("pcf-pipelines", func() {
+var _ = Describe("pcf-tile-automation", func() {
 	cwd, err := os.Getwd()
 	if err != nil {
 		log.Fatalf("failed to get working dir: %s", err)
@@ -161,7 +161,7 @@ in the following params template:
 					resources := availableResources(&job.Plan)
 
 					for i, task := range tasks {
-						if !strings.HasPrefix(task.TaskConfigPath, "pcf-pipelines") {
+						if !strings.HasPrefix(task.TaskConfigPath, "pcf-tile-automation") {
 							continue
 						}
 

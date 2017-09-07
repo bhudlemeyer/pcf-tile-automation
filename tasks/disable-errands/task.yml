@@ -6,7 +6,7 @@ image_resource:
   source: {repository: czero/cflinuxfs2}
 
 inputs:
-- name: pcf-pipelines
+- name: pcf-tile-automation
 
 params:
   PRODUCT_NAME:
@@ -16,4 +16,4 @@ params:
   ERRANDS_TO_DISABLE:
 
 run:
-  path: pcf-pipelines/tasks/disable-errands/task.sh
+  path: pcf-tile-automation/tasks/disable-errands/task.sh

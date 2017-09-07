@@ -29,7 +29,7 @@ terraform plan \
   -var "opsman_allow_https=${OPSMAN_ALLOW_HTTPS}" \
   -var "opsman_allow_https_cidr_ranges=${OPSMAN_ALLOW_HTTPS_CIDR_LIST}" \
   -out terraform.tfplan \
-  pcf-pipelines/install-pcf/aws/terraform
+  pcf-tile-automation/install-pcf/aws/terraform
 
 terraform apply \
   -state-out terraform-state-output/terraform.tfstate \

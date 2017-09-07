@@ -7,7 +7,7 @@ image_resource:
     repository: golang
 
 inputs:
-- name: pcf-pipelines
+- name: pcf-tile-automation
 
 run:
   path: bash
@@ -21,6 +21,6 @@ run:
     go get github.com/onsi/gomega
     go get github.com/concourse/atc
 
-    pushd pcf-pipelines
+    pushd pcf-tile-automation
       ginkgo -p -r -randomizeAllSpecs
     popd

@@ -7,7 +7,7 @@ image_resource:
     repository: czero/cflinuxfs2
 
 inputs:
-- name: pcf-pipelines
+- name: pcf-tile-automation
 
 params:
   OPSMAN_URI:
@@ -35,4 +35,4 @@ params:
   OS_INTERFACE:
 
 run:
-  path: pcf-pipelines/install-pcf/openstack/tasks/wipe-env/task.sh
+  path: pcf-tile-automation/install-pcf/openstack/tasks/wipe-env/task.sh

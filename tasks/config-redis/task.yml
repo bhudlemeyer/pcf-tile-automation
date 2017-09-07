@@ -30,8 +30,8 @@ params:
   LARGE_PLAN_STATUS:
 
 inputs:
-  - name: pcf-pipelines
+  - name: pcf-tile-automation
   - name: tool-om
 
 run:
-  path: pcf-pipelines/tasks/config-redis/task.sh
+  path: pcf-tile-automation/tasks/config-redis/task.sh

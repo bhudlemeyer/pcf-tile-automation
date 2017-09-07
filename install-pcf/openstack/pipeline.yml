@@ -31,10 +31,10 @@ resource_types:
     tag: latest-final
 
 resources:
-- name: pcf-pipelines
+- name: pcf-tile-automation
   type: git
   source:
-    uri: http://github.com/pivotal-cf/pcf-pipelines.git
+    uri: http://github.com/pivotal-cf/pcf-tile-automation.git
 
 - name: ops-manager
   type: pivnet
@@ -55,9 +55,9 @@ jobs:
 - name: create-infrastructure
   serial_groups: [infra]
   plan:
-  - get: pcf-pipelines
+  - get: pcf-tile-automation
   - task: create-infrastructure
-    file: pcf-pipelines/install-pcf/openstack/tasks/create-infrastructure/task.yml
+    file: pcf-tile-automation/install-pcf/openstack/tasks/create-infrastructure/task.yml
     params:
       EXTERNAL_NETWORK: {{external_network}}
       INFRA_NETWORK: {{infra_network}}
@@ -90,9 +90,9 @@ jobs:
       params:
         globs:
         - "*.raw"
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
   - task: upload
-    file: pcf-pipelines/install-pcf/openstack/tasks/upload-opsman/task.yml
+    file: pcf-tile-automation/install-pcf/openstack/tasks/upload-opsman/task.yml
     params:
       OPENSTACK_CA_CERT: {{pre_os_cacert}}
       OPSMAN_IMAGE: {{opsman_image}}
@@ -106,7 +106,7 @@ jobs:
       OS_USERNAME: {{os_username}}
       OS_INTERFACE: {{os_interface}}
   - task: deploy
-    file: pcf-pipelines/install-pcf/openstack/tasks/deploy-opsman/task.yml
+    file: pcf-tile-automation/install-pcf/openstack/tasks/deploy-opsman/task.yml
     params:
       EXTERNAL_NETWORK: {{external_network}}
       INFRA_NETWORK: {{infra_network}}
@@ -127,7 +127,7 @@ jobs:
       OPSMAN_FLOATING_IP: {{opsman_floating_ip}}
       OPSMAN_VM_NAME: {{opsman_vm_name}}
   - task: configure-auth
-    file: pcf-pipelines/tasks/config-opsman/task.yml
+    file: pcf-tile-automation/tasks/config-opsman/task.yml
     params:
       OPS_MGR_HOST: {{opsman_uri}}
       OPS_MGR_USR: {{opsman_admin_username}}
@@ -138,13 +138,13 @@ jobs:
   serial_groups: [opsman]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: ops-manager
       params: {globs: []}
       passed: [deploy-opsman]
       trigger: true
   - task: configure
-    file: pcf-pipelines/install-pcf/openstack/tasks/config-director/task.yml
+    file: pcf-tile-automation/install-pcf/openstack/tasks/config-director/task.yml
     params:
       OPSMAN_URI: {{opsman_uri}}
       OPSMAN_USERNAME: {{opsman_admin_username}}
@@ -204,13 +204,13 @@ jobs:
   serial_groups: [opsman]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: ops-manager
       params: {globs: []}
       passed: [configure-director]
       trigger: true
   - task: apply-changes
-    file: pcf-pipelines/tasks/apply-changes/task.yml
+    file: pcf-tile-automation/tasks/apply-changes/task.yml
     params:
       OPSMAN_URI: {{opsman_uri}}
       OPSMAN_USERNAME: {{opsman_admin_username}}
@@ -220,7 +220,7 @@ jobs:
   serial_groups: [opsman]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: pivnet-product
       resource: elastic-runtime
       params: {globs: ["*.pivotal"]}
@@ -229,7 +229,7 @@ jobs:
       passed: [deploy-director]
       trigger: true
   - task: upload-tile
-    file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
+    file: pcf-tile-automation/tasks/upload-product-and-stemcell/task.yml
     params:
       OPS_MGR_HOST: {{opsman_uri}}
       OPS_MGR_USR: {{opsman_admin_username}}
@@ -239,7 +239,7 @@ jobs:
       OM_IP: ""
       IAAS: openstack
   - task: stage-tile
-    file: pcf-pipelines/tasks/stage-product/task.yml
+    file: pcf-tile-automation/tasks/stage-product/task.yml
     params:
       OPSMAN_URI: {{opsman_uri}}
       OPSMAN_USERNAME: {{opsman_admin_username}}
@@ -250,7 +250,7 @@ jobs:
   serial_groups: [opsman]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: pivnet-product
       resource: elastic-runtime
       params: {globs: ["*.pivotal"]}
@@ -258,7 +258,7 @@ jobs:
       trigger: true
 
   - task: configure
-    file: pcf-pipelines/tasks/config-ert/task.yml
+    file: pcf-tile-automation/tasks/config-ert/task.yml
     params:
       OPS_MGR_HOST: {{opsman_uri}}
       OPS_MGR_USR: {{opsman_admin_username}}
@@ -368,7 +368,7 @@ jobs:
       DIEGO_BRAIN_NSX_LB_PORT:
 
   - task: deploy
-    file: pcf-pipelines/tasks/apply-changes/task.yml
+    file: pcf-tile-automation/tasks/apply-changes/task.yml
     params:
       OPSMAN_URI: {{opsman_uri}}
       OPSMAN_USERNAME: {{opsman_admin_username}}
@@ -377,9 +377,9 @@ jobs:
 - name: wipe-env
   serial_groups: [infra]
   plan:
-  - get: pcf-pipelines
+  - get: pcf-tile-automation
   - task: wipe-env
-    file: pcf-pipelines/install-pcf/openstack/tasks/wipe-env/task.yml
+    file: pcf-tile-automation/install-pcf/openstack/tasks/wipe-env/task.yml
     params:
       OPSMAN_URI: {{opsman_uri}}
       OPSMAN_USERNAME: {{opsman_admin_username}}

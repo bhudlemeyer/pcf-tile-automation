@@ -71,7 +71,7 @@ params:
   NSX_CA_CERTIFICATE:
 
 inputs:
-  - name: pcf-pipelines
+  - name: pcf-tile-automation
 
 run:
-  path: pcf-pipelines/install-pcf/vsphere/tasks/config-opsdir/task.sh
+  path: pcf-tile-automation/install-pcf/vsphere/tasks/config-opsdir/task.sh

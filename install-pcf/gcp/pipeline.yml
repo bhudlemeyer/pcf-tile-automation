@@ -13,10 +13,10 @@ resource_types:
     repository: frodenas/gcs-resource
 
 resources:
-- name: pcf-pipelines
+- name: pcf-tile-automation
   type: git
   source:
-    uri: git@github.com:pivotal-cf/pcf-pipelines.git
+    uri: git@github.com:pivotal-cf/pcf-tile-automation.git
     branch: master
     private_key: {{git_private_key}}
 
@@ -54,10 +54,10 @@ jobs:
       file: wipe-output/*.tfstate
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: terraform-state
   - task: wipe
-    file: pcf-pipelines/install-pcf/gcp/tasks/wipe-env/task.yml
+    file: pcf-tile-automation/install-pcf/gcp/tasks/wipe-env/task.yml
     params:
       GCP_PROJECT_ID: {{gcp_project_id}}
       GCP_REGION: {{gcp_region}}
@@ -68,14 +68,14 @@ jobs:
 
 - name: upload-opsman-image
   plan:
-  - get: pcf-pipelines
+  - get: pcf-tile-automation
   - get: pivnet-opsmgr
     trigger: true
     params:
       globs:
       - "*GCP.yml"
   - task: upload
-    file: pcf-pipelines/install-pcf/gcp/tasks/upload-opsman/task.yml
+    file: pcf-tile-automation/install-pcf/gcp/tasks/upload-opsman/task.yml
     params:
       GCP_PROJECT_ID: {{gcp_project_id}}
       GCP_REGION: {{gcp_region}}
@@ -84,12 +84,12 @@ jobs:
 - name: bootstrap-terraform-state
   serial: true
   plan:
-  - get: pcf-pipelines
+  - get: pcf-tile-automation
   - task: create-terraform-state
     params:
       TERRAFORM_STATEFILE_BUCKET: {{terraform_statefile_bucket}}
       GCP_SERVICE_ACCOUNT_KEY: {{gcp_service_account_key}}
-    file: pcf-pipelines/install-pcf/gcp/tasks/create-initial-terraform-state/task.yml
+    file: pcf-tile-automation/install-pcf/gcp/tasks/create-initial-terraform-state/task.yml
 
 - name: create-infrastructure
   serial_groups: [terraform]
@@ -100,14 +100,14 @@ jobs:
   plan:
   - aggregate:
     - get: terraform-state
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: pivnet-opsmgr
       passed: [upload-opsman-image]
       params:
         globs:
         - "*GCP.yml"
   - task: create-infrastructure
-    file: pcf-pipelines/install-pcf/gcp/tasks/create-infrastructure/task.yml
+    file: pcf-tile-automation/install-pcf/gcp/tasks/create-infrastructure/task.yml
     params:
       GCP_PROJECT_ID: {{gcp_project_id}}
       GCP_REGION: {{gcp_region}}
@@ -148,22 +148,22 @@ jobs:
   serial_groups: [opsman]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: pivnet-opsmgr
       passed: [create-infrastructure]
       params: {globs: []}
   - task: check-opsman-dns
-    file: pcf-pipelines/install-pcf/gcp/tasks/check-opsman-dns/task.yml
+    file: pcf-tile-automation/install-pcf/gcp/tasks/check-opsman-dns/task.yml
     params:
       pcf_ert_domain: {{pcf_ert_domain}}
   - task: configure-opsman-auth
-    file: pcf-pipelines/install-pcf/gcp/tasks/config-opsman-auth/task.yml
+    file: pcf-tile-automation/install-pcf/gcp/tasks/config-opsman-auth/task.yml
     params:
       pcf_ert_domain: {{pcf_ert_domain}}
       pcf_opsman_admin_username: {{pcf_opsman_admin_username}}
       pcf_opsman_admin_password: {{pcf_opsman_admin_password}}
   - task: configure-director
-    file: pcf-pipelines/install-pcf/gcp/tasks/config-director/task.yml
+    file: pcf-tile-automation/install-pcf/gcp/tasks/config-director/task.yml
     params:
       OPS_MGR_HOST: {{opsman_uri}}
       OPS_MGR_USR: {{pcf_opsman_admin_username}}
@@ -181,13 +181,13 @@ jobs:
   serial_groups: [opsman]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: pivnet-opsmgr
       passed: [configure-director]
       trigger: true
       params: {globs: []}
   - task: deploy-director
-    file: pcf-pipelines/install-pcf/gcp/tasks/deploy-director/task.yml
+    file: pcf-tile-automation/install-pcf/gcp/tasks/deploy-director/task.yml
     params:
       pcf_ert_domain: {{pcf_ert_domain}}
       pcf_opsman_admin_username: {{pcf_opsman_admin_username}}
@@ -197,7 +197,7 @@ jobs:
   serial_groups: [opsman]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: pivnet-opsmgr
       passed: [deploy-director]
       trigger: true
@@ -208,7 +208,7 @@ jobs:
         globs:
         - "*pivotal"
   - task: upload-tile
-    file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
+    file: pcf-tile-automation/tasks/upload-product-and-stemcell/task.yml
     params:
       OPS_MGR_HOST: {{opsman_uri}}
       OPS_MGR_USR: {{pcf_opsman_admin_username}}
@@ -219,7 +219,7 @@ jobs:
       OM_IP: ""
 
   - task: stage-tile
-    file: pcf-pipelines/tasks/stage-product/task.yml
+    file: pcf-tile-automation/tasks/stage-product/task.yml
     params:
       OPSMAN_URI: {{opsman_uri}}
       OPSMAN_USERNAME: {{pcf_opsman_admin_username}}
@@ -230,7 +230,7 @@ jobs:
   serial_groups: [opsman]
   plan:
   - aggregate:
-    - get: pcf-pipelines
+    - get: pcf-tile-automation
     - get: pivnet-opsmgr
       passed: [upload-ert]
       trigger: true
@@ -238,7 +238,7 @@ jobs:
     - get: terraform-state
 
   - task: configure-json
-    file: pcf-pipelines/tasks/install-ert/configure-json/task.yml
+    file: pcf-tile-automation/tasks/install-ert/configure-json/task.yml
     params:
       pcf_iaas: gcp
       terraform_template: default
@@ -295,7 +295,7 @@ jobs:
       S3_ENDPOINT:
 
   - task: configure-ert
-    file: pcf-pipelines/tasks/install-ert/configure-ert/task.yml
+    file: pcf-tile-automation/tasks/install-ert/configure-ert/task.yml
     params:
       pcf_iaas: gcp
       pcf_ert_domain: {{pcf_ert_domain}}
@@ -303,7 +303,7 @@ jobs:
       pcf_opsman_admin_passwd: {{pcf_opsman_admin_password}}
 
   - task: disable-errands
-    file: pcf-pipelines/tasks/disable-errands/task.yml
+    file: pcf-tile-automation/tasks/disable-errands/task.yml
     params:
       PRODUCT_NAME: cf
       OPSMAN_URI: {{opsman_uri}}
@@ -312,7 +312,7 @@ jobs:
       ERRANDS_TO_DISABLE: {{ert_errands_to_disable}}
 
   - task: deploy-ert
-    file: pcf-pipelines/tasks/apply-changes/task.yml
+    file: pcf-tile-automation/tasks/apply-changes/task.yml
     params:
       OPSMAN_URI: {{opsman_uri}}
       OPSMAN_USERNAME: {{pcf_opsman_admin_username}}

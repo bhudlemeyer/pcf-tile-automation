@@ -1,15 +1,15 @@
 resources:
-- name: pcf-pipelines
+- name: pcf-tile-automation
   type: git
   source:
-    uri: git@github.com:pivotal-cf/pcf-pipelines.git
+    uri: git@github.com:pivotal-cf/pcf-tile-automation.git
     branch: master
     private_key: {{git_private_key}}
 
 jobs:
 - name: bootstrap-aws
   plan:
-  - get: pcf-pipelines
+  - get: pcf-tile-automation
   - task: terraform
     params:
       AWS_ACCESS_KEY_ID: {{admin_aws_access_key_id}}
@@ -19,4 +19,4 @@ jobs:
       TERRAFORM_STATEFILES_BUCKET: {{terraform_statefiles_bucket}}
       PIVNET_TOKEN: {{pivnet_token}}
       MYSQL_MONITOR_EMAIL: {{mysql_monitor_email}}
-    file: pcf-pipelines/ci/bootstrap/aws/tasks/bootstrap.yml
+    file: pcf-tile-automation/ci/bootstrap/aws/tasks/bootstrap.yml

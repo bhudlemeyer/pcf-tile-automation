@@ -17,8 +17,8 @@ params:
   NETWORK_NAME:
 
 inputs:
-  - name: pcf-pipelines
+  - name: pcf-tile-automation
   - name: tool-om
 
 run:
-  path: pcf-pipelines/tasks/config-sso/task.sh
+  path: pcf-tile-automation/tasks/config-sso/task.sh

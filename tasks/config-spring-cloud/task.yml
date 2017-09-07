@@ -11,14 +11,14 @@ params:
   OPS_MGR_HOST:
   OPS_MGR_USR:
   OPS_MGR_PWD:
+  OPSMAN_URI:
   SINGLETON_JOB_AZ:
   OTHER_JOB_AZS:
   NETWORK_NAME:
-  NOTIFICATIONS_EMAIL:
 
 inputs:
   - name: pcf-tile-automation
   - name: tool-om
 
 run:
-  path: pcf-tile-automation/tasks/config-pcf-metrics/task.sh
+  path: pcf-tile-automation/tasks/config-spring-cloud/task.sh

@@ -7,12 +7,12 @@ image_resource:
     repository: czero/cflinuxfs2
 
 inputs:
-- name: pcf-pipelines
+- name: pcf-tile-automation
 - name: version
 - name: fly
 
 outputs:
-- name: pcf-pipelines-release-tarball
+- name: pcf-tile-automation-release-tarball
 - name: pivnet-metadata
 
 params:
@@ -32,7 +32,7 @@ run:
     root=$PWD
 
     echo "Creating upgrade-ert pipeline from upgrade-tile pipeline"
-    pushd pcf-pipelines
+    pushd pcf-tile-automation
       mkdir -p upgrade-ert
 
       sed \
@@ -45,35 +45,35 @@ run:
       ) > upgrade-ert/pipeline.yml
     popd
 
-    # Switch pcf-pipelines to point at Pivnet release of pcf-pipelines instead
+    # Switch pcf-tile-automation to point at Pivnet release of pcf-tile-automation instead
     # of GitHub
     version=v$(cat version/version)
 
     set +e # read -d '' requires this
     read -r -d '' hardcode_pivnet_version <<EOF
     - op: replace
-      path: /resources/name=pcf-pipelines-tarball/source/product_version
+      path: /resources/name=pcf-tile-automation-tarball/source/product_version
       value: $version
     EOF
 
     read -r -d '' test_for_pcf_pipelines_git <<EOF
     - op: test
-      path: /resources/name=pcf-pipelines
+      path: /resources/name=pcf-tile-automation
       value:
-        name: pcf-pipelines
+        name: pcf-tile-automation
         type: git
         source:
-          uri: git@github.com:pivotal-cf/pcf-pipelines.git
+          uri: git@github.com:pivotal-cf/pcf-tile-automation.git
           branch: master
           private_key: "{{git_private_key}}"
     EOF
     set -e
 
     files=$(
-      find pcf-pipelines \
+      find pcf-tile-automation \
       -type f \
       -name pipeline.yml |
-      grep -v pcf-pipelines/ci
+      grep -v pcf-tile-automation/ci
     )
 
     for f in ${files[@]}; do
@@ -81,7 +81,7 @@ run:
         echo "Using pivnet release for ${f}"
         cat $f |
         yaml_patch_linux \
-          -o pcf-pipelines/operations/use-pivnet-release.yml \
+          -o pcf-tile-automation/operations/use-pivnet-release.yml \
           -o <(echo "$hardcode_pivnet_version") \
           > $f.bk
         mv $f.bk $f
@@ -95,26 +95,26 @@ run:
     done
 
     echo "Creating install-pcf/vsphere/offline/pipeline.yml"
-    mkdir -p pcf-pipelines/install-pcf/vsphere/offline
+    mkdir -p pcf-tile-automation/install-pcf/vsphere/offline
     cat > steamroll_config.yml <<EOF
     resource_map:
-      "pcf-pipelines": $root/pcf-pipelines
+      "pcf-tile-automation": $root/pcf-tile-automation
     EOF
-    steamroll -p pcf-pipelines/install-pcf/vsphere/pipeline.yml -c steamroll_config.yml |
+    steamroll -p pcf-tile-automation/install-pcf/vsphere/pipeline.yml -c steamroll_config.yml |
     yaml_patch_linux \
-      -o pcf-pipelines/operations/create-install-pcf-vsphere-offline-pipeline.yml \
+      -o pcf-tile-automation/operations/create-install-pcf-vsphere-offline-pipeline.yml \
       > vsphere-offline.yml
-    fly fmt -c vsphere-offline.yml > pcf-pipelines/install-pcf/vsphere/offline/pipeline.yml
+    fly fmt -c vsphere-offline.yml > pcf-tile-automation/install-pcf/vsphere/offline/pipeline.yml
 
     echo "Creating install-pcf/vsphere/offline/params.yml"
-    cp pcf-pipelines/install-pcf/vsphere{,/offline}/params.yml
+    cp pcf-tile-automation/install-pcf/vsphere{,/offline}/params.yml
     sed -i \
       -e '/pivnet_token:/d' \
       -e '/ert_major_minor_version:/d' \
       -e '/opsman_major_minor_version:/d' \
       -e '/company_proxy_domain:/d' \
-      pcf-pipelines/install-pcf/vsphere/offline/params.yml
-    cat >> pcf-pipelines/install-pcf/vsphere/offline/params.yml <<EOF
+      pcf-tile-automation/install-pcf/vsphere/offline/params.yml
+    cat >> pcf-tile-automation/install-pcf/vsphere/offline/params.yml <<EOF
 
     # offline resource config
     s3_endpoint:
@@ -130,7 +130,7 @@ run:
     release:
       version: "${version}"
       release_date: "${release_date}"
-      release_notes_url: "https://github.com/pivotal-cf/pcf-pipelines/releases"
+      release_notes_url: "https://github.com/pivotal-cf/pcf-tile-automation/releases"
       description: |
         Concourse Pipeline Templates and Scripts for PCF Platform Ops Automation
       availability: $AVAILABILITY
@@ -149,7 +149,7 @@ run:
       exclusions+=" --exclude download-offline-resources"
       exclusions+=" --exclude install-pcf/vsphere/offline"
       exclusions+=" --exclude create-offline-pinned-pipelines"
-      exclusions+=" --exclude unpack-pcf-pipelines-combined"
+      exclusions+=" --exclude unpack-pcf-tile-automation-combined"
     fi
 
     echo "Creating release tarball, ommitting the following globs:"
@@ -158,5 +158,5 @@ run:
       $exclusions \
       --create \
       --gzip \
-      --file pcf-pipelines-release-tarball/pcf-pipelines-$version.tgz \
-      pcf-pipelines
+      --file pcf-tile-automation-release-tarball/pcf-tile-automation-$version.tgz \
+      pcf-tile-automation

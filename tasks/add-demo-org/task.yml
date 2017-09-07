@@ -20,7 +20,7 @@ image_resource:
   source: {repository: czero/cflinuxfs2}
 
 inputs:
-- name: pcf-pipelines
+- name: pcf-tile-automation
 
 params:
   CF_API_URI:
@@ -32,4 +32,4 @@ params:
   DEMO_PW: 
 
 run:
-  path: pcf-pipelines/tasks/add-demo-org/task.sh
+  path: pcf-tile-automation/tasks/add-demo-org/task.sh

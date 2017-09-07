@@ -6,7 +6,7 @@ image_resource:
   source:
     repository: czero/cflinuxfs2
 inputs:
-  - name: pcf-pipelines 
+  - name: pcf-tile-automation 
   - name: terraform-state
 params:
   PEM:
@@ -36,4 +36,4 @@ params:
   DB_SILK_USERNAME:
   DB_SILK_PASSWORD:
 run:
-  path: pcf-pipelines/install-pcf/aws/tasks/prepare-rds/task.sh
+  path: pcf-tile-automation/install-pcf/aws/tasks/prepare-rds/task.sh

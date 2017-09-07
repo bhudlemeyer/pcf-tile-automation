@@ -22,10 +22,10 @@ image_resource:
 
 inputs:
   - name: cliaas-config
-  - name: pcf-pipelines
+  - name: pcf-tile-automation
 
 params:
   VM_IDENTIFIER:
 
 run:
-  path: pcf-pipelines/tasks/replace-vm/task.sh
+  path: pcf-tile-automation/tasks/replace-vm/task.sh

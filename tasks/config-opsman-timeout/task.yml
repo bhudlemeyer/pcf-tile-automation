@@ -13,7 +13,7 @@ params:
   OPSMAN_PASSPHRASE:        
 
 inputs:
-  - name: pcf-pipelines
+  - name: pcf-tile-automation
 
 run:
-  path: pcf-pipelines/tasks/config-opsman-timeout/task.sh
+  path: pcf-tile-automation/tasks/config-opsman-timeout/task.sh

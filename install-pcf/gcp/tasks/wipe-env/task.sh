@@ -7,7 +7,7 @@ export GOOGLE_CREDENTIALS=${GCP_SERVICE_ACCOUNT_KEY}
 export GOOGLE_PROJECT=${GCP_PROJECT_ID}
 export GOOGLE_REGION=${GCP_REGION}
 
-source "${root}/pcf-pipelines/functions/check_opsman_available.sh"
+source "${root}/pcf-tile-automation/functions/check_opsman_available.sh"
 
 opsman_available=$(check_opsman_available $OPSMAN_URI)
 if [[ $opsman_available == "available" ]]; then
@@ -59,4 +59,4 @@ terraform destroy -force \
   -var "db_silk_username=dontcare" \
   -var "db_silk_password=dontcare" \
   -state-out $root/wipe-output/terraform.tfstate \
-  pcf-pipelines/install-pcf/gcp/terraform
+  pcf-tile-automation/install-pcf/gcp/terraform

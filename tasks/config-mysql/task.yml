@@ -36,8 +36,8 @@ params:
   MONITORING_INSTANCES: 1
   MYSQL_BROKER_INSTANCES: 2
 inputs:
-  - name: pcf-pipelines
+  - name: pcf-tile-automation
   - name: tool-om
 
 run:
-  path: pcf-pipelines/tasks/config-mysql/task.sh
+  path: pcf-tile-automation/tasks/config-mysql/task.sh

@@ -22,7 +22,7 @@ image_resource:
 
 inputs:
   - name: pivnet-opsmgr
-  - name: pcf-pipelines
+  - name: pcf-tile-automation
 
 outputs:
   - name: cliaas-config
@@ -39,4 +39,4 @@ params:
     AZURE_STORAGE_CONTAINER_NAME:
 
 run:
-  path: pcf-pipelines/upgrade-ops-manager/azure/tasks/create-cliaas-config/task.sh
+  path: pcf-tile-automation/upgrade-ops-manager/azure/tasks/create-cliaas-config/task.sh

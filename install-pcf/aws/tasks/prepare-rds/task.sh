@@ -6,7 +6,7 @@ chmod 0600 pcf.pem
 
 CWD=$(pwd)
 pushd $CWD
-  cd pcf-pipelines/install-pcf/aws/terraform/
+  cd pcf-tile-automation/install-pcf/aws/terraform/
   cp $CWD/terraform-state/terraform.tfstate .
 
   while read -r line

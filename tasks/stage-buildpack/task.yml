@@ -21,7 +21,7 @@ image_resource:
 
 inputs:
 - name: buildpack
-- name: pcf-pipelines
+- name: pcf-tile-automation
 
 params:
   CF_API_URI:
@@ -30,4 +30,4 @@ params:
   BUILDPACK_NAME:
 
 run:
-  path: pcf-pipelines/tasks/stage-buildpack/task.sh
+  path: pcf-tile-automation/tasks/stage-buildpack/task.sh

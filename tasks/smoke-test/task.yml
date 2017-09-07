@@ -14,8 +14,8 @@ params:
   BOSH_CLIENT_SECRET:
 
 inputs:
-  - name: pcf-pipelines
+  - name: pcf-tile-automation
   - name: boshv2-cli
 
 run:
-  path: pcf-pipelines/tasks/smoke-test/task.sh
+  path: pcf-tile-automation/tasks/smoke-test/task.sh

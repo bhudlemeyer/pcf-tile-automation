@@ -17,7 +17,7 @@ params:
 
 inputs:
   - name: pivnet-product
-  - name: pcf-pipelines
+  - name: pcf-tile-automation
 
 run:
-  path: pcf-pipelines/tasks/upload-product-and-stemcell/task.sh
+  path: pcf-tile-automation/tasks/upload-product-and-stemcell/task.sh

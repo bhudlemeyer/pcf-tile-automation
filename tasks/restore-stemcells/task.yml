@@ -20,7 +20,7 @@ image_resource:
   source: {repository: czero/cflinuxfs2}
 
 inputs:
-  - name: pcf-pipelines
+  - name: pcf-tile-automation
   - name: stemcells
 
 params:
@@ -29,4 +29,4 @@ params:
   OPSMAN_URI:
 
 run:
-  path: pcf-pipelines/tasks/restore-stemcells/task.sh
+  path: pcf-tile-automation/tasks/restore-stemcells/task.sh
