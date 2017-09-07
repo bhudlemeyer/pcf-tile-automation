@@ -1,0 +1,65 @@
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+resources:
+        #- name: govc
+        #  type: github-release
+        #  source:
+        #    user: vmware
+        #    repository: govmomi
+        #    access_token: {{github_token}} ## Optional: Removing this will cause you to hit the rate limit
+
+- name: tool-om
+  type: github-release
+  source:
+    user: pivotal-cf
+    repository: om
+    access_token: {{github_token}} ## Optional: Removing this will cause you to hit the rate limit
+
+- name: pcf-tile-automations
+  type: git
+  source:
+#   uri: https://github.com/pivotal-cf/pcf-tile-automations
+#   branch: master
+    uri: https://github.com/bhudlemeyer/pcf-tile-automation.git
+    branch: master
+    username: {{github_token}}
+
+# - name: customer-repo
+
+jobs:
+- name: config-rabbitmq-tile
+  plan:
+  - aggregate:
+    - get: pcf-tile-automations
+      trigger: true
+    - get: tool-om
+      params: {globs: ["*linux*"]}
+
+  - task: config-rabbitmq-tile
+    file: pcf-tile-automations/tasks/config-rabbitmq/task.yml
+    params:
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      OPS_MGR_HOST: {{opsman_uri}}
+      SINGLETON_JOB_AZ: {{az_1_name}}
+      OTHER_JOB_AZS: {{services_nw_azs}}
+      NETWORK_NAME: {{services_network_name}}
+      RABBITMQ_PLUGINS: "rabbitmq_management"
+      PRIVATE_KEY_PEM: {{rabbitmq_private_key_pem}}
+      CERT_PEM: {{rabbitmq_cert_pem}}
+      SSL_CA_CERT: {{rabbitmq_ca_cert}}
+      SSL_VERIFY: {{rabbitmq_ssl_verify}}
+      SSL_VERIFY_DEPTH: {{rabbitmq_ssl_verify_depth}}
+      SSL_FAIL_IF_NO_PEER_CERT: {{rabbitmq_ssl_require_peer_validation}}
+      RABBITMQ_COOKIE: {{rabbitmq_cookie}}
+      RABBITMQ_CONFIG: {{rabbitmq_config}}
+      RABBITMQ_ADMIN: {{rabbitmq_admin}}
+      RABBITMQ_PW: {{rabbitmq_pw}}
+      SYSLOG_HOST: {{syslog_host}}
+      SYSLOG_PORT: {{syslog_port}}
+      SERVICE_NETWORK: {{dynamic_services_network_name}}

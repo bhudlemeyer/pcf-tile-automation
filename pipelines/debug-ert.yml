@@ -1,0 +1,124 @@
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+resources:
+        #- name: govc
+        #  type: github-release
+        #  source:
+        #    user: vmware
+        #    repository: govmomi
+        #    access_token: {{github_token}} ## Optional: Removing this will cause you to hit the rate limit
+
+- name: tool-om
+  type: github-release
+  source:
+    user: pivotal-cf
+    repository: om
+    access_token: {{github_token}} ## Optional: Removing this will cause you to hit the rate limit
+
+- name: pcf-tile-automations
+  type: git
+  source:
+#   uri: https://github.com/pivotal-cf/pcf-tile-automations
+#   branch: master
+    uri: https://github.com/bhudlemeyer/pcf-tile-automation.git
+    branch: master
+    username: {{github_token}}
+
+jobs:
+- name: config-elastic-runtime-tile
+  plan:
+  - aggregate:
+    - get: pcf-tile-automations
+      trigger: true
+    - get: tool-om
+      params: {globs: ["*linux*"]}
+
+  - task: config-er-tile
+    file: pcf-tile-automations/tasks/config-ert/task.yml
+    params:
+      OPS_MGR_HOST: {{opsman_uri}}
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      ERT_SINGLETON_JOB_AZ: {{ert_singleton_job_az}}
+      DEPLOYMENT_NW_AZS: {{deployment_nw_azs}}
+      NETWORK_NAME: {{deployment_network_name}}
+      ENABLE_SECURITY_EVENT_LOGGING: {{enable_security_event_logging}}
+      SYSLOG_HOST: {{syslog_host}}
+      SYSLOG_PORT: {{syslog_port}}
+      SYSLOG_PROTOCOL: {{syslog_protocol}}
+      SYSLOG_DRAIN_BUFFER_SIZE: {{syslog_drain_buffer_size}}
+      COMPANY_NAME: {{company_name}}
+      AUTHENTICATION_MODE: {{authentication_mode}}
+      LOGGREGATOR_ENDPOINT_PORT: {{loggregator_endpoint_port}}
+      SSL_TERMINATION: {{ssl_termination_point}}
+      SSL_CERT: {{ssl_cert}}
+      OPS_MGR_GENERATE_SSL_ENDPOINT: {{om_generate_ssl_endpoint}}
+      SSL_PRIVATE_KEY: {{ssl_private_key}}
+      DISABLE_HTTP_PROXY: {{disable_http_proxy}}
+      TCP_ROUTING: {{tcp_routing}}
+      TCP_ROUTING_PORTS: {{tcp_routing_ports}}
+      ROUTE_SERVICES: {{route_services}}
+      IGNORE_SSL_CERT: {{ignore_ssl_cert_verification}}
+      SMTP_FROM: {{smtp_from}}
+      SMTP_ADDRESS: {{smtp_address}}
+      SMTP_PORT: {{smtp_port}}
+      SMTP_USER: {{smtp_user}}
+      SMTP_PWD: {{smtp_pwd}}
+      SMTP_AUTH_MECHANISM: {{smtp_auth_mechanism}}
+      LDAP_URL: {{ldap_url}}
+      LDAP_USER: {{ldap_user}}
+      LDAP_PWD: {{ldap_pwd}}
+      SEARCH_BASE: {{search_base}}
+      SEARCH_FILTER: {{search_filter}}
+      GROUP_SEARCH_BASE: {{group_search_base}}
+      GROUP_SEARCH_FILTER: {{group_search_filter}}
+      MAIL_ATTR_NAME: {{mail_attribute_name}}
+      FIRST_NAME_ATTR: {{first_name_attribute}}
+      LAST_NAME_ATTR: {{last_name_attribute}}
+      SECURITY_ACKNOWLEDGEMENT: {{security_acknowledgement}}
+      SYSTEM_DOMAIN: {{system_domain}}
+      APPS_DOMAIN: {{apps_domain}}
+      DEFAULT_QUOTA_MEMORY_LIMIT_IN_MB: {{default_quota_memory_limit_mb}}
+      DEFAULT_QUOTA_MAX_SERVICES_COUNT: {{default_quota_max_number_services}}
+      HA_PROXY_IPS: {{ha_proxy_ips}}
+      SKIP_CERT_VERIFY: {{skip_cert_verify}}
+      DISABLE_INSECURE_COOKIES: {{disable_insecure_cookies}}
+      ROUTER_STATIC_IPS: {{router_static_ips}}
+      ROUTER_REQUEST_TIMEOUT_IN_SEC: {{router_request_timeout_in_seconds}}
+      GARDEN_NETWORK_POOL_CIDR: {{garden_network_pool_cidr}}
+      GARDEN_NETWORK_MTU: {{garden_network_mtu}}
+      MYSQL_MONITOR_EMAIL: {{mysql_monitor_email}}
+      MYSQL_BACKUPS: {{mysql_backups}}
+      ALLOW_APP_SSH_ACCESS: {{allow_app_ssh_access}}
+      TCP_ROUTER_STATIC_IPS: {{tcp_router_static_ips}}
+      SSH_STATIC_IPS: {{ssh_static_ips}}
+      CONSUL_SERVER_INSTANCES: {{consul_server_instances}}
+      NATS_INSTANCES: {{nats_instances}}
+      ETCD_TLS_SERVER_INSTANCES: {{etcd_tls_server_instances}}
+      NFS_SERVER_INSTANCES: {{nfs_server_instances}}
+      MYSQL_PROXY_INSTANCES: {{mysql_proxy_instances}}
+      MYSQL_INSTANCES: {{mysql_instances}}
+      BACKUP_PREPARE_INSTANCES: {{backup_prepare_instances}}
+      CCDB_INSTANCES: {{ccdb_instances}}
+      UAADB_INSTANCES: {{uaadb_instances}}
+      UAA_INSTANCES: {{uaa_instances}}
+      CLOUD_CONTROLLER_INSTANCES: {{cloud_controller_instances}}
+      HA_PROXY_INSTANCES: {{ha_proxy_instances}}
+      ROUTER_INSTANCES: {{router_instances}}
+      MYSQL_MONITOR_INSTANCES: {{mysql_monitor_instances}}
+      CLOCK_GLOBAL_INSTANCES: {{clock_global_instances}}
+      CLOUD_CONTROLLER_WORKER_INSTANCES: {{cloud_controller_worker_instances}}
+      DIEGO_DATABASE_INSTANCES: {{diego_database_instances}}
+      DIEGO_BRAIN_INSTANCES: {{diego_brain_instances}}
+      DIEGO_CELL_INSTANCES: {{diego_cell_instances}}
+      DOPPLER_INSTANCES: {{doppler_instances}}
+      LOGGREGATOR_TC_INSTANCES: {{loggregator_traffic_controller_instances}}
+      TCP_ROUTER_INSTANCES: {{tcp_router_instances}}
+      SERVICE_PROVIDER_KEY: {{ert_service_provider_key}}
+      SERVICE_PROVIDER_CERT: {{ert_service_provider_cert}}
+      SYSLOG_ADAPTER_INSTANCES: {{syslog_adapter_instances}}

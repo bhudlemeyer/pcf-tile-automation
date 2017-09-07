@@ -1,0 +1,137 @@
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+resources:
+        #- name: govc
+        #  type: github-release
+        #  source:
+        #    user: vmware
+        #    repository: govmomi
+        #    access_token: {{github_token}} ## Optional: Removing this will cause you to hit the rate limit
+
+- name: tool-om
+  type: github-release
+  source:
+    user: pivotal-cf
+    repository: om
+    access_token: {{github_token}} ## Optional: Removing this will cause you to hit the rate limit
+
+- name: pivnet-cli
+  type: github-release
+  source:
+    user: pivotal-cf
+    repository: pivnet-cli
+    access_token: {{github_token}} ## Optional: Removing this will cause you to hit the rate limit
+
+- name: pcf-tile-automations
+  type: git
+  source:
+    uri: https://github.com/bhudlemeyer/pcf-tile-automation.git
+    branch: master
+    username: {{github_token}}
+
+# - name: customer-repo
+#   type: git
+#   source:
+#     uri: https://github.com/rahul-kj/sample-customer-repo
+#     branch: master
+
+- name: pivotal-rabbitmq-service
+  type: pivnet
+  check_every: {{pivnet_poll_interval}}
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: pivotal-rabbitmq-service
+    product_version: {{rabbitmq_major_minor_version}}
+    sort_by: semver
+
+jobs:
+- name: upload-rabbitmq-tile
+  plan:
+  - aggregate:
+    - get: pcf-tile-automations
+      trigger: true
+    - get: pivnet-product
+      resource: pivotal-rabbitmq-service
+    - get: tool-om
+    - get: pivnet-cli
+      params: {globs: ["*linux-amd64*"]}
+
+  - task: upload-tile
+    file: pcf-tile-automations/tasks/upload-product-and-stemcell/task.yml
+    attempts: 3
+    params:
+      OPS_MGR_HOST: {{opsman_uri}}
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      PIVNET_API_TOKEN: {{pivnet_token}}
+      NO_PROXY: {{company_proxy_domain}}
+      OM_IP: {{om_ip}}
+      IAAS: {{iaas_type}}
+
+  - task: stage-tile
+    file: pcf-tile-automations/tasks/stage-product/task.yml
+    params:
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+      OPSMAN_URI: {{opsman_uri}}
+      PRODUCT_NAME: p-rabbitmq
+
+- name: config-rabbitmq-tile
+  plan:
+  - aggregate:
+    - get: pcf-tile-automations
+      trigger: true
+      passed: [upload-rabbitmq-tile]
+    - get: tool-om
+      params: {globs: ["*linux*"]}
+      passed: [upload-rabbitmq-tile]
+
+  - task: config-rabbitmq-tile
+    file: pcf-tile-automations/tasks/config-rabbitmq/task.yml
+    params:
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      OPS_MGR_HOST: {{opsman_uri}}
+      SINGLETON_JOB_AZ: {{az_1_name}}
+      OTHER_JOB_AZS: {{services_nw_azs}}
+      NETWORK_NAME: {{services_network_name}}
+      RABBITMQ_PLUGINS: "rabbitmq_management"
+      PRIVATE_KEY_PEM: {{rabbitmq_private_key_pem}}
+      CERT_PEM: {{rabbitmq_cert_pem}}
+      SSL_CA_CERT: {{rabbitmq_ca_cert}}
+      SSL_VERIFY: {{rabbitmq_ssl_verify}}
+      SSL_VERIFY_DEPTH: {{rabbitmq_ssl_verify_depth}}
+      SSL_FAIL_IF_NO_PEER_CERT: {{rabbitmq_ssl_require_peer_validation}}
+      RABBITMQ_COOKIE: {{rabbitmq_cookie}}
+      RABBITMQ_CONFIG: {{rabbitmq_config}}
+      RABBITMQ_ADMIN: {{rabbitmq_admin}}
+      RABBITMQ_PW: {{rabbitmq_pw}}
+      SYSLOG_HOST: {{syslog_host}}
+      SYSLOG_PORT: {{syslog_port}}
+      SERVICE_NETWORK: {{dynamic_services_network_name}}
+
+#uncomment this section to deploy rabbitmq after config is complete
+
+#- name: product-apply-changes
+#  plan:
+#  - aggregate:
+#    - get: pcf-tile-automations
+#      trigger: true
+#      passed: [config-rabbitmq-tile]
+#    - get: tool-om
+#      params: {globs: ["*linux*"]}
+#      passed: [config-rabbitmq-tile]
+#
+#  - task: apply-changes
+#    file: pcf-tile-automations/tasks/apply-changes/task.yml
+#    attempts: 3
+#    params:
+#      OPSMAN_URI: {{opsman_uri}}
+#      OPSMAN_USERNAME: {{opsman_admin_username}}
+#      OPSMAN_PASSWORD: {{opsman_admin_password}}
+#      OPSMAN_TIMEOUT: {{opsman_timeout_seconds}}

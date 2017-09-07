@@ -1,0 +1,138 @@
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+resources:
+        #- name: govc
+        #  type: github-release
+        #  source:
+        #    user: vmware
+        #    repository: govmomi
+        #    access_token: {{github_token}} ## Optional: Removing this will cause you to hit the rate limit
+
+- name: tool-om
+  type: github-release
+  source:
+    user: pivotal-cf
+    repository: om
+    access_token: {{github_token}} ## Optional: Removing this will cause you to hit the rate limit
+
+- name: pivnet-cli
+  type: github-release
+  source:
+    user: pivotal-cf
+    repository: pivnet-cli
+    access_token: {{github_token}} ## Optional: Removing this will cause you to hit the rate limit
+
+- name: pcf-tile-automations
+  type: git
+  source:
+    uri: https://github.com/bhudlemeyer/pcf-tile-automation.git
+    branch: master
+    username: {{github_token}}
+
+# - name: customer-repo
+#   type: git
+#   source:
+#     uri: https://github.com/rahul-kj/sample-customer-repo
+#     branch: master
+
+- name: p-redis
+  type: pivnet
+  check_every: {{pivnet_poll_interval}}
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: p-redis
+    product_version: {{redis_major_minor_version}}
+    sort_by: semver
+
+
+jobs:
+- name: upload-redis-tile
+  plan:
+  - aggregate:
+    - get: pcf-tile-automations
+      trigger: true
+    - get: pivnet-product
+      resource: p-redis
+    - get: tool-om
+    - get: pivnet-cli
+      params: {globs: ["*linux-amd64*"]}
+
+  - task: upload-tile
+    file: pcf-tile-automations/tasks/upload-product-and-stemcell/task.yml
+    attempts: 3
+    params:
+      OPS_MGR_HOST: {{opsman_uri}}
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      PIVNET_API_TOKEN: {{pivnet_token}}
+      NO_PROXY: {{company_proxy_domain}}
+      OM_IP: {{om_ip}}
+      IAAS: {{iaas_type}}
+
+  - task: stage-tile
+    file: pcf-tile-automations/tasks/stage-product/task.yml
+    params:
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+      OPSMAN_URI: {{opsman_uri}}
+      PRODUCT_NAME: p-redis
+
+- name: config-redis-tile
+  plan:
+  - aggregate:
+    - get: pcf-tile-automations
+      trigger: true
+      passed: [upload-redis-tile]
+    - get: tool-om
+      params: {globs: ["*linux*"]}
+      passed: [upload-redis-tile]
+
+  - task: config-redis-tile
+    file: pcf-tile-automations/tasks/config-redis/task.yml
+    params:
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      OPS_MGR_HOST: {{opsman_uri}}
+      SINGLETON_JOB_AZ: {{az_1_name}}
+      OTHER_JOB_AZS: {{services_nw_azs}}
+      NETWORK_NAME: {{services_network_name}}
+      SYSLOG_HOST: {{syslog_host}}
+      SYSLOG_PORT: {{syslog_port}}
+      BACKUPS_SCP_HOST: {{redis_backups_scp_host}}
+      BACKUPS_SCP_PORT: {{redis_backups_scp_port}}
+      BACKUPS_SCP_USER: {{redis_backups_scp_user}}
+      BACKUPS_SCP_KEY: {{redis_backups_scp_key}}
+      BACKUPS_SCP_DESTINATION: {{redis_backups_scp_destination}}
+      BACKUPS_SCP_TIMEOUT: {{redis_backups_scp_timeout}}
+      BACKUPS_CRON_SCHEDULE: {{redis_backups_cron_schedule}}
+      DISABLE_TLS: {{redis_disable_tls}}
+      SERVICE_NETWORK: {{dynamic_services_network_name}}
+      SMALL_PLAN_STATUS: {{redis_small_plan_cache_status}}
+      MEDIUM_PLAN_STATUS: {{redis_medium_plan_cache_status}}
+      LARGE_PLAN_STATUS: {{redis_large_plan_cache_status}}
+
+#uncomment to deploy redis when config is completed
+
+#- name: product-apply-changes
+#  plan:
+#  - aggregate:
+#    - get: pcf-tile-automations
+#      trigger: true
+#      passed: [config-redis-tile]
+#    - get: tool-om
+#      params: {globs: ["*linux*"]}
+#      passed: [config-redis-tile]
+#
+#  - task: apply-changes
+#    file: pcf-tile-automations/tasks/apply-changes/task.yml
+#    attempts: 3
+#    params:
+#      OPSMAN_URI: {{opsman_uri}}
+#      OPSMAN_USERNAME: {{opsman_admin_username}}
+#      OPSMAN_PASSWORD: {{opsman_admin_password}}
+#      OPSMAN_TIMEOUT: {{opsman_timeout_seconds}}

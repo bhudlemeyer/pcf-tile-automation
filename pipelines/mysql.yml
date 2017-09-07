@@ -1,0 +1,144 @@
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+resources:
+        #- name: govc
+        #  type: github-release
+        #  source:
+        #    user: vmware
+        #    repository: govmomi
+        #    access_token: {{github_token}} ## Optional: Removing this will cause you to hit the rate limit
+
+- name: tool-om
+  type: github-release
+  source:
+    user: pivotal-cf
+    repository: om
+    access_token: {{github_token}} ## Optional: Removing this will cause you to hit the rate limit
+
+- name: pivnet-cli
+  type: github-release
+  source:
+    user: pivotal-cf
+    repository: pivnet-cli
+    access_token: {{github_token}} ## Optional: Removing this will cause you to hit the rate limit
+
+- name: pcf-tile-automations
+  type: git
+  source:
+    uri: https://github.com/bhudlemeyer/pcf-tile-automation.git
+    branch: master
+    username: {{github_token}}
+
+# - name: customer-repo
+#   type: git
+#   source:
+#     uri: https://github.com/rahul-kj/sample-customer-repo
+#     branch: master
+
+- name: p-mysql
+  type: pivnet
+  check_every: {{pivnet_poll_interval}}
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: p-mysql
+    product_version: {{mysql_major_minor_version}}
+    sort_by: semver
+
+jobs:
+- name: upload-mysql-tile
+  plan:
+  - aggregate:
+    - get: pcf-tile-automations
+      trigger: true
+    - get: pivnet-product
+      resource: p-mysql
+    - get: tool-om
+    - get: pivnet-cli
+      params: {globs: ["*linux-amd64*"]}
+
+  - task: upload-tile
+    file: pcf-tile-automations/tasks/upload-product-and-stemcell/task.yml
+    attempts: 3
+    params:
+      OPS_MGR_HOST: {{opsman_uri}}
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      PIVNET_API_TOKEN: {{pivnet_token}}
+      NO_PROXY: {{company_proxy_domain}}
+      OM_IP: {{om_ip}}
+      IAAS: {{iaas_type}}
+
+  - task: stage-tile
+    file: pcf-tile-automations/tasks/stage-product/task.yml
+    params:
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+      OPSMAN_URI: {{opsman_uri}}
+      PRODUCT_NAME: p-mysql
+
+- name: config-mysql-tile
+  plan:
+  - aggregate:
+    - get: pcf-tile-automations
+      trigger: true
+      passed: [upload-mysql-tile]
+    - get: tool-om
+      params: {globs: ["*linux*"]}
+      passed: [upload-mysql-tile]
+
+  - task: config-mysql-tile
+    file: pcf-tile-automations/tasks/config-mysql/task.yml
+    params:
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      OPS_MGR_HOST: {{opsman_uri}}
+      SINGLETON_JOB_AZ: {{az_1_name}}
+      NETWORK_NAME: {{services_network_name}}
+      PRODUCT_NAME: "p-mysql"
+      DEPLOYMENT_NW_AZS: {{services_nw_azs}}
+      PLAN_NAME: "100mb"
+      PLAN_DESCRIPTION: "100MB default"
+      PLAN_MAX_STORAGE_MB: 100
+      PLAN_MAX_USER_CONNECTIONS: 40
+      PLAN_INVISIBLE: false
+      SYSLOG_HOST: {{syslog_host}}
+      SYSLOG_PORT: {{syslog_port}}
+      PROTECTION_EMAIL: {{mysql_protect_email}}
+      BACKUP_CRON_SCHEDULE: {{mysql_backups_cron_schedule}}
+      BACKUP_SCP_HOST: {{mysql_backups_scp_host}}
+      BACKUP_SCP_PORT: {{mysql_backups_scp_port}}
+      BACKUP_SCP_USER: {{mysql_backups_scp_user}}
+      BACKUP_SCP_KEY: {{mysql_backups_scp_key}}
+      BACKUP_SCP_DESTINATION: {{mysql_backups_scp_destination}}
+      MYSQL_SERVER_INSTANCES: 3
+      BACKUP_PREPARE_INSTANCES: 1
+      MYSQL_PROXY_INSTANCES: 2
+      MONITORING_INSTANCES: 1
+      MYSQL_BROKER_INSTANCES: 2
+
+
+# uncomment this sectiont to deploy mysql after configuration is completed
+
+#- name: product-apply-changes
+#  plan:
+#  - aggregate:
+#    - get: pcf-tile-automations
+#      trigger: true
+#      passed: [config-mysql-tile]
+#    - get: tool-om
+#      params: {globs: ["*linux*"]}
+#      passed: [config-mysql-tile]
+#
+#  - task: apply-changes
+#    file: pcf-tile-automations/tasks/apply-changes/task.yml
+#    attempts: 3
+#    params:
+#      OPSMAN_URI: {{opsman_uri}}
+#      OPSMAN_USERNAME: {{opsman_admin_username}}
+#      OPSMAN_PASSWORD: {{opsman_admin_password}}
+#      OPSMAN_TIMEOUT: {{opsman_timeout_seconds}}

@@ -11,7 +11,6 @@ Specifically
 * MySQL
 * RabbitMQ
 * Redis
-* Spring-Cloud
 * PCF Metrics
 * JMX Bridge
 
