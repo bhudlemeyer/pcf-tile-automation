@@ -40,7 +40,10 @@ fly -t yourtarget set-pipeline \
 ```
 
 
-Under the pipelines folder you will find a pipeline for each backing service along with a pipeline with all backing services and the params file needed to make each one work correctly today. This is a new repo and does not currently have allot of smarts in the tasks today IE if / that statements etc. As a result it is opinionated on what settings need to be provided and which are ignored for right now.
+Under the pipelines folder you will find a pipeline.yml for each backing service and the params.yml needed to make each one work correctly today. 
+
+
+This is a new repo and does not currently have allot of smarts in the tasks IE if / that statements etc. As a result it is opinionated on what settings need to be provided and which are ignored for right now.
 
 
 
