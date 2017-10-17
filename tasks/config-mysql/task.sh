@@ -41,33 +41,6 @@ PRODUCT_PROPERTIES=$(cat <<-EOF
   ".properties.server_activity_logging.enable.audit_logging_events": {
     "value": "connect,query"
   },
-  ".properties.backup_options": {
-    "value": "enable"
-  },
-  ".properties.backup_options.enable.cron_schedule": {
-    "value": "$BACKUP_CRON_SCHEDULE"
-  },
-  ".properties.backup_options.enable.backup_all_masters": {
-    "value": true
-  },
-  ".properties.backups": {
-    "value": "scp"
-  },
-  ".properties.backups.scp.server": {
-    "value": "$BACKUP_SCP_HOST"
-  },
-  ".properties.backups.scp.user": {
-    "value": "$BACKUP_SCP_USER"
-  },
-  ".properties.backups.scp.destination": {
-    "value": "$BACKUP_SCP_DESTINATION"
-  },
-  ".properties.backups.scp.scp_key": {
-    "value": "$BACKUP_SCP_KEY"
-  },
-  ".properties.backups.scp.port": {
-    "value": $BACKUP_SCP_PORT
-  },
   ".properties.syslog": {
     "value": "enabled"
   },
@@ -181,7 +154,7 @@ EOF
 
 elif [[ "$BACKUP_DESTINATION" == "s3" ]]; then
 echo "Using s3 as the backup destination..."
-SSL_PROPERTIES=$(cat <<-EOF
+BACKUP_DESTINATION_PROPERTIES=$(cat <<-EOF
 {
   ".properties.backups": {
     "value": "enable"
