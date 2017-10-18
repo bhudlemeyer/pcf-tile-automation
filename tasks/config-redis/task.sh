@@ -86,7 +86,7 @@ PROPERTIES=$(cat <<-EOF
       "value": "$BACKUPS_CRON_SCHEDULE"
     },
     ".properties.backups_selector.scp.bg_save_timeout": {
-      "value": $BACKUPS_SCP_TIMEOUT
+      "value": "$BACKUPS_SCP_TIMEOUT"
     },
     ".properties.backups_selector.scp.fingerprint": {
       "value": null
