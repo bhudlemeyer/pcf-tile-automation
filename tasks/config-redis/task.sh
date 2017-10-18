@@ -56,7 +56,7 @@ PROPERTIES=$(cat <<-EOF
       "value": "TCP"
     },
     ".properties.backups_selector": {
-      "value": "Disable Backups"
+      "value": "disabled"
     },
     ".properties.small_plan_selector": {
        "value": "$SMALL_PLAN_STATUS"
