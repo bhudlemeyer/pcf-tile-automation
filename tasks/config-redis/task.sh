@@ -26,7 +26,7 @@ NETWORK=$(cat <<-EOF
     "name": "$SINGLETON_JOB_AZ"
   },
   "other_availability_zones": [
-    $OTHER_AZS
+    "$OTHER_AZS"
   ],
   "network": {
     "name": "$NETWORK_NAME"
@@ -47,7 +47,7 @@ PROPERTIES=$(cat <<-EOF
       "value": "$SYSLOG_HOST"
     },
     ".properties.syslog_port": {
-      "value": $SYSLOG_PORT
+      "value": "$SYSLOG_PORT"
     },
     ".properties.metrics_polling_interval": {
       "value": 30
@@ -80,7 +80,7 @@ PROPERTIES=$(cat <<-EOF
       "value": "$BACKUPS_SCP_DESTINATION"
     },
     ".properties.backups_selector.scp.port": {
-      "value": $BACKUPS_SCP_PORT
+      "value": "$BACKUPS_SCP_PORT"
     },
     ".properties.backups_selector.scp.cron_schedule": {
       "value": "$BACKUPS_CRON_SCHEDULE"
