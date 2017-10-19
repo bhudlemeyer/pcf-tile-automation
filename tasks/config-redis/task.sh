@@ -43,10 +43,10 @@ PROPERTIES=$(cat <<-EOF
     ".redis-on-demand-broker.service_instance_limit": {
       "value": 0
     },
-    ".properties.syslog_address": {
+    ".properties.syslog_selector.active.syslog_address": {
       "value": "$SYSLOG_HOST"
     },
-    ".properties.syslog_port": {
+    ".properties.syslog_selector.active.syslog_port": {
       "value": "$SYSLOG_PORT"
     },
     ".properties.metrics_polling_interval": {
