@@ -66,9 +66,6 @@ PROPERTIES=$(cat <<-EOF
     },
     ".properties.large_plan_selector": {
       "value": "$LARGE_PLAN_STATUS"
-    },
-    ".properties.backups_selector.scp.fingerprint": {
-      "value": null
     }
 }
 EOF
