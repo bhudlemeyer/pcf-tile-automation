@@ -52,7 +52,7 @@ PROPERTIES=$(cat <<-EOF
     ".properties.metrics_polling_interval": {
       "value": 30
     },
-    ".properties.syslog_transport": {
+    ".properties.syslog_selector.active.syslog_transport": {
       "value": "TCP"
     },
     ".properties.backups_selector": {
