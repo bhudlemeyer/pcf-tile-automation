@@ -53,7 +53,7 @@ PROPERTIES=$(cat <<-EOF
       "value": 30
     },
     ".properties.syslog_selector.active.syslog_transport": {
-      "value": "TCP"
+      "value": "tcp"
     },
     ".properties.backups_selector": {
       "value": "No Backups"
