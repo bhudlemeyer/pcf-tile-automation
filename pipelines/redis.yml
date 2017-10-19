@@ -118,21 +118,21 @@ jobs:
 
 #uncomment to deploy redis when config is completed
 
-#- name: product-apply-changes
-#  plan:
-#  - aggregate:
-#    - get: pcf-tile-automation
-#      trigger: true
-#      passed: [config-redis-tile]
-#    - get: tool-om
-#      params: {globs: ["*linux*"]}
-#      passed: [config-redis-tile]
-#
-#  - task: apply-changes
-#    file: pcf-tile-automation/tasks/apply-changes/task.yml
-#    attempts: 3
-#    params:
-#      OPSMAN_URI: {{opsman_uri}}
-#      OPSMAN_USERNAME: {{opsman_admin_username}}
-#      OPSMAN_PASSWORD: {{opsman_admin_password}}
-#      OPSMAN_TIMEOUT: {{opsman_timeout_seconds}}
+- name: product-apply-changes
+  plan:
+  - aggregate:
+    - get: pcf-tile-automation
+      trigger: true
+      passed: [config-redis-tile]
+    - get: tool-om
+      params: {globs: ["*linux*"]}
+      passed: [config-redis-tile]
+
+  - task: apply-changes
+    file: pcf-tile-automation/tasks/apply-changes/task.yml
+    attempts: 3
+    params:
+      OPSMAN_URI: {{opsman_uri}}
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+      OPSMAN_TIMEOUT: {{opsman_timeout_seconds}}
