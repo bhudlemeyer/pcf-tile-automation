@@ -160,7 +160,7 @@ EOF
 
 elif [[ "$BACKUP_DESTINATION" == "s3" ]]; then
 echo "Using s3 as the backup destination..."
-SSL_PROPERTIES=$(cat <<-EOF
+BACKUP_DESTINATION_PROPERTIES=$(cat <<-EOF
 {
   ".properties.backups": {
     "value": "enable"
