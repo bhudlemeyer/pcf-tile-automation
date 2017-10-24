@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 #mv tool-om/om-linux-* tool-om/om-linux
 chmod +x tool-om/om-linux
