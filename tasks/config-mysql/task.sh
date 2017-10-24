@@ -58,6 +58,9 @@ PRODUCT_PROPERTIES=$(cat <<-EOF
   },
   ".cf-mysql-broker.bind_hostname": {
     "value": null
+  },
+  ".properties.backup_options.enable.cron_schedule": {
+    "value": null
   }
 }
 EOF
