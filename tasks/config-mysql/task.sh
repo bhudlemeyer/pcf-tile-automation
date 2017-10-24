@@ -60,7 +60,7 @@ PRODUCT_PROPERTIES=$(cat <<-EOF
     "value": null
   },
   ".properties.backup_options.enable.cron_schedule": {
-    "value": null
+    "value": "0"
   }
 }
 EOF
