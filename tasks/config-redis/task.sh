@@ -65,31 +65,7 @@ PROPERTIES=$(cat <<-EOF
       "value": "$LARGE_PLAN_STATUS"
     },
     ".properties.backups_selector": {
-      "value": "SCP Backups"
-    },
-    ".properties.backups_selector.scp.server": {
-      "value": "$BACKUPS_SCP_HOST"
-    },
-    ".properties.backups_selector.scp.user": {
-      "value": "$BACKUPS_SCP_USER"
-    },
-    ".properties.backups_selector.scp.key": {
-      "value": "$BACKUPS_SCP_KEY"
-    },
-    ".properties.backups_selector.scp.path": {
-      "value": "$BACKUPS_SCP_DESTINATION"
-    },
-    ".properties.backups_selector.scp.port": {
-      "value": $BACKUPS_SCP_PORT
-    },
-    ".properties.backups_selector.scp.cron_schedule": {
-      "value": "$BACKUPS_CRON_SCHEDULE"
-    },
-    ".properties.backups_selector.scp.bg_save_timeout": {
-      "value": $BACKUPS_SCP_TIMEOUT
-    },
-    ".properties.backups_selector.scp.fingerprint": {
-      "value": null
+      "value": "$BACKUPS_SELECTOR"
     }
 }
 EOF
