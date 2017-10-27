@@ -139,8 +139,8 @@ if [[ "$BACKUPS_SELECTOR" == "S3 Backups" ]]; then
         "value": "$S3_SCHEDULE"
       }
   }
-  EOF
-  )
+EOF
+)
   echo "Applying backups settings..."
   $CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$BACKUPS_PROPS"
 fi
