@@ -47,7 +47,7 @@ PROPERTIES=$(cat <<-EOF
       "value": "$SYSLOG_SELECTOR"
     },
     ".properties.syslog_selector.active.syslog_transport": {
-      "value": "TCP"
+      "value": "$SYSLOG_PROTOCOL"
     },
     ".properties.syslog_selector.active.syslog_address": {
       "value": "$SYSLOG_HOST"
