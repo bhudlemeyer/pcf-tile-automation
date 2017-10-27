@@ -130,7 +130,7 @@ else
     --raw-output \
     'split(" ")
     | reduce .[] as $errand ([];
-       if $to_disable | contains($errand) then
+       if $to_disable | in($errand) then
          . + [$errand]
        else
          .
