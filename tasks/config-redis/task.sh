@@ -132,21 +132,6 @@ else
     done
   )
 
-#  will_disable=$(
-#  echo $enabled_errands |
-#  jq \
-#    --arg to_disable "${errands_to_disable[@]}" \
-#    --raw-input \
-#    --raw-output \
-#    'split(" ")
-#    | reduce .[] as $errand ([];
-#       if $to_disable | test("on-demand-broker-smoke-tests") then
-#         . + [$errand]
-#       else
-#         .
-#       end)
-#    | join("\n")'
-#  )
   if [ -z "$will_disable" ]; then
     echo "All errands are already disable that were requested"
   else
