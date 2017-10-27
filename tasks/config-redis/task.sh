@@ -114,7 +114,7 @@ if [[ -z "$ERRANDS_TO_DISABLE" ]] || [[ "$ERRANDS_TO_DISABLE" == "none" ]]; then
   echo "No post-deploy errands to disable"
 else
   enabled_errands=$(
-  $CMD -t https://${OPS_MGR_HOST} -u $OPS_MGR_USR -p $OPS_MGR_PWD errands --product-name $PRODUCT_NAME |
+  $CMD -t https://${OPS_MGR_HOST} -u $OPS_MGR_USR -p $OPS_MGR_PWD -k errands --product-name $PRODUCT_NAME |
   tail -n+4 | head -n-1 | grep -v false | cut -d'|' -f2 | tr -d ' '
   )
   if [[ "$ERRANDS_TO_DISABLE" == "all" ]]; then
@@ -142,7 +142,7 @@ else
   else
     while read errand; do
       echo -n Disabling $errand...
-      $CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD set-errand-state -n $PRODUCT_NAME --errand-name $errand --post-deploy-state "disabled"
+      $CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k set-errand-state -n $PRODUCT_NAME --errand-name $errand --post-deploy-state "disabled"
       echo done
     done < <(echo "$will_disable")
   fi
