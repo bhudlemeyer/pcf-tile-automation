@@ -142,7 +142,7 @@ else
   else
     while read errand; do
       echo -n Disabling $errand...
-      $CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k set-errand-state -n $PRODUCT_NAME --errand-name $errand --post-deploy-state "disabled"
+      $CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k set-errand-state --product-name $PRODUCT_NAME --errand-name $errand --post-deploy-state "disabled"
       echo done
     done < <(echo "$will_disable")
   fi
