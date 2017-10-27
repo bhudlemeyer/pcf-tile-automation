@@ -43,18 +43,6 @@ PROPERTIES=$(cat <<-EOF
     ".redis-on-demand-broker.service_instance_limit": {
       "value": 0
     },
-    ".properties.syslog_selector": {
-      "value": "$SYSLOG_SELECTOR"
-    },
-    ".properties.syslog_selector.active.syslog_transport": {
-      "value": "$SYSLOG_PROTOCOL"
-    },
-    ".properties.syslog_selector.active.syslog_address": {
-      "value": "$SYSLOG_HOST"
-    },
-    ".properties.syslog_selector.active.syslog_port": {
-      "value": $SYSLOG_PORT
-    },
     ".properties.metrics_polling_interval": {
       "value": 30
     },
@@ -68,37 +56,45 @@ PROPERTIES=$(cat <<-EOF
       "value": "$LARGE_PLAN_STATUS"
     },
     ".properties.backups_selector": {
-      "value": "$BACKUPS_SELECTOR"
-    },
-    ".properties.backups_selector.s3.access_key_id": {
-      "value": "$S3_ACCESS_KEY"
-    },
-    ".properties.backups_selector.s3.secret_access_key": {
-      "value": "$S3_SECRET_KEY"
-    },
-    ".properties.backups_selector.s3.endpoint_url": {
-      "value": "$S3_ENDPOINT"
-    },
-    ".properties.backups_selector.s3.signature_version": {
-      "value": "$S3_SIGNATURE"
-    },
-    ".properties.backups_selector.s3.bucket_name" {
-      "value": "$S3_BUCKET"
-    },
-    ".properties.backups_selector.s3.path": {
-      "value": "$S3_PATH"
-    },
-    ".properties.backups_selector.s3.cron_schedule": {
-      "value": "$S3_SCHEDULE"
+      "value": "No Backups"
     }
 }
 EOF
 )
 
+$CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$PROPERTIES" -pn "$NETWORK" -pr "$RESOURCES"
+
+
+if [[ "$SYSLOG_SELECTOR" == "true" ]]; then
+SYSLOG_PROPS=$(cat <<-EOF
+{
+    ".properties.syslog_selector": {
+      "value": "Yes"
+    },
+    ".properties.syslog_selector.active.syslog_transport": {
+      "value": "$SYSLOG_PROTOCOL"
+    },
+    ".properties.syslog_selector.active.syslog_address": {
+      "value": "$SYSLOG_HOST"
+    },
+    ".properties.syslog_selector.active.syslog_port": {
+      "value": $SYSLOG_PORT
+    }
+}
+EOF
+)
+else
+SYSLOG_PROPS=$(cat <<-EOF
+{
+    ".properties.syslog_selector": {
+      "value": "No"
+    }
+}
+fi
 RESOURCES=$(cat <<-EOF
 {
 }
 EOF
 )
 
-$CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$PROPERTIES" -pn "$NETWORK" -pr "$RESOURCES"
+$CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$BACKUP_PROPERTIES"
