@@ -89,6 +89,7 @@ SYSLOG_PROPS=$(cat <<-EOF
 }
 EOF
 )
+
 else
 SYSLOG_PROPS=$(cat <<-EOF
 {
@@ -97,6 +98,7 @@ SYSLOG_PROPS=$(cat <<-EOF
     }
 }
 )
+
 fi
 
 $CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$BACKUP_PROPERTIES"
