@@ -96,6 +96,7 @@ SYSLOG_PROPS=$(cat <<-EOF
       "value": "No"
     }
 }
+)
 fi
 
 $CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$BACKUP_PROPERTIES"
