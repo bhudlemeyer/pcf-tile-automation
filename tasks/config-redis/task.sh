@@ -43,6 +43,12 @@ PROPERTIES=$(cat <<-EOF
     ".redis-on-demand-broker.service_instance_limit": {
       "value": 0
     },
+    ".properties.syslog_selector": {
+      "value": "$SYSLOG_SELECTOR"
+    },
+    ".properties.syslog_selector.active.syslog_transport": {
+      "value": "TCP"
+    },
     ".properties.syslog_selector.active.syslog_address": {
       "value": "$SYSLOG_HOST"
     },
@@ -51,12 +57,6 @@ PROPERTIES=$(cat <<-EOF
     },
     ".properties.metrics_polling_interval": {
       "value": 30
-    },
-    ".properties.syslog_selector": {
-      "value": "$SYSLOG_SELECTOR"
-    },
-    ".properties.syslog_transport": {
-      "value": "TCP"
     },
     ".properties.small_plan_selector": {
        "value": "$SMALL_PLAN_STATUS"
