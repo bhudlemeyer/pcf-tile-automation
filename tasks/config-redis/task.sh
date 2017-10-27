@@ -114,13 +114,7 @@ if [[ -z "$ERRANDS_TO_DISABLE" ]] || [[ "$ERRANDS_TO_DISABLE" == "none" ]]; then
   echo "No post-deploy errands to disable"
 else
   enabled_errands=$(
-  om-linux \
-    --target "https://${OPSMAN_DOMAIN_OR_IP_ADDRESS}" \
-    --skip-ssl-validation \
-    --username "$OPSMAN_USERNAME" \
-    --password "$OPSMAN_PASSWORD" \
-    errands \
-    --product-name "$PRODUCT_NAME" |
+  $CMD -t https://${OPS_MGR_HOST} -u $OPS_MGR_USR -p $OPS_MGR_PWD errands --product-name $PRODUCT_NAME |
   tail -n+4 | head -n-1 | grep -v false | cut -d'|' -f2 | tr -d ' '
   )
   if [[ "$ERRANDS_TO_DISABLE" == "all" ]]; then
