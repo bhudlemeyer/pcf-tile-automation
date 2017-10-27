@@ -130,7 +130,7 @@ else
     --raw-output \
     'split(" ")
     | reduce .[] as $errand ([];
-       if $to_disable | test("^on-demand-broker-smoke-tests$") then
+       if $to_disable | test("on-demand-broker-smoke-tests") then
          . + [$errand]
        else
          .
