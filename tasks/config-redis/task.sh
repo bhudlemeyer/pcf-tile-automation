@@ -110,6 +110,41 @@ fi
 echo "Applying syslog settings..."
 $CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$SYSLOG_PROPS"
 
+
+if [[ "$BACKUPS_SELECTOR" == "S3 Backups" ]]; then
+  BACKUPS_PROPS=$(cat <<-EOF
+  {
+      ".properties.backups_selector": {
+        "value": "$BACKUPS_SELECTOR"
+      },
+      ".properties.backups_selector.s3.access_key_id": {
+        "value": "$S3_ACCESS_KEY"
+      },
+      ".properties.backups_selector.s3.secret_access_key": {
+        "value": "$S3_SECRET_KEY"
+      },
+      ".properties.backups_selector.s3.endpoint_url": {
+        "value": "$S3_ENDPOINT"
+      },
+      ".properties.backups_selector.s3.signature_version": {
+        "value": "$S3_SIGNATURE"
+      },
+      ".properties.backups_selector.s3.bucket_name": {
+        "value": "$S3_BUCKET"
+      },
+      ".properties.backups_selector.s3.path": {
+        "value": "$S3_PATH"
+      },
+      ".properties.backups_selector.s3.cron_schedule": {
+        "value": "$S3_SCHEDULE"
+      }
+  }
+  EOF
+  )
+  echo "Applying backups settings..."
+  $CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$BACKUPS_PROPS"
+fi
+
 if [[ -z "$ERRANDS_TO_DISABLE" ]] || [[ "$ERRANDS_TO_DISABLE" == "none" ]]; then
   echo "No post-deploy errands to disable"
 else
