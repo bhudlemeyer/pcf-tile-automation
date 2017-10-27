@@ -130,7 +130,7 @@ else
     --raw-output \
     'split(" ")
     | reduce .[] as $errand ([];
-       if $to_disable | test("^$errand$") then
+       if $to_disable | test("^on-demand-broker-smoke-tests$") then
          . + [$errand]
        else
          .
@@ -147,5 +147,3 @@ else
     done < <(echo "$will_disable")
   fi
 fi
-
-$CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$SYSLOG_PROPS"
