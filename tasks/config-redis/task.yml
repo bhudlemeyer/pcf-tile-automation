@@ -30,6 +30,7 @@ params:
   S3_BUCKET:
   S3_PATH:
   S3_SCHEDULE:
+  ERRANDS_TO_DISABLE:
 
 inputs:
   - name: pcf-tile-automation
