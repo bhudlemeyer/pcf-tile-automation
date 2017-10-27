@@ -64,6 +64,10 @@ EOF
 
 RESOURCES=$(cat <<-EOF
 {
+  "redis-on-demand-broker": {
+    "instance_type": {"id": "automatic"},
+    "instances" : $ONDEMAND_BROKER_INSTANCES
+  }
 }
 EOF
 )
