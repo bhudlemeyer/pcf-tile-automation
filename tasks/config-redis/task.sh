@@ -69,6 +69,27 @@ PROPERTIES=$(cat <<-EOF
     },
     ".properties.backups_selector": {
       "value": "$BACKUPS_SELECTOR"
+    },
+    ".properties.backups_selector.s3.access_key_id": {
+      "value": "$S3_ACCESS_KEY"
+    },
+    ".properties.backups_selector.s3.secret_access_key": {
+      "value": "$S3_SECRET_KEY"
+    },
+    ".properties.backups_selector.s3.endpoint_url": {
+      "value": "$S3_ENDPOINT"
+    },
+    ".properties.backups_selector.s3.signature_version": {
+      "value": "$S3_SIGNATURE"
+    },
+    ".properties.backups_selector.s3.bucket_name" {
+      "value": "$S3_BUCKET"
+    },
+    ".properties.backups_selector.s3.path": {
+      "value": "$S3_PATH"
+    },
+    ".properties.backups_selector.s3.cron_schedule": {
+      "value": "$S3_SCHEDULE"
     }
 }
 EOF
