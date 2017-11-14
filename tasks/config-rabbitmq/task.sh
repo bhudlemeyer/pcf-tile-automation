@@ -90,13 +90,13 @@ SYSLOG_PROPS=$(cat <<-EOF
     ".properties.syslog_selector": {
       "value": "Yes"
     },
-    ".properties.syslog_selector.active.syslog_transport": {
+    ".properties.syslog_selector.enabled.syslog_transport": {
       "value": "$SYSLOG_PROTOCOL"
     },
-    ".properties.syslog_selector.active.syslog_address": {
+    ".properties.syslog_selector.enabled.address": {
       "value": "$SYSLOG_HOST"
     },
-    ".properties.syslog_selector.active.syslog_port": {
+    ".properties.syslog_selector.enabled.port": {
       "value": $SYSLOG_PORT
     }
 }
