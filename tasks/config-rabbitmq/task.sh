@@ -88,7 +88,7 @@ if [[ "$SYSLOG_SELECTOR" == "true" ]]; then
 SYSLOG_PROPS=$(cat <<-EOF
 {
     ".properties.syslog_selector": {
-      "value": "true"
+      "value": "enabled"
     },
     ".properties.syslog_selector.enabled.syslog_transport": {
       "value": "$SYSLOG_PROTOCOL"
