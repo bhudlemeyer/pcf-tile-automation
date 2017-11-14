@@ -276,6 +276,9 @@ jq \
     ".mysql_monitor.recipient_email": {
       "value": $mysql_monitor_email
     },
+    ".mysql.remote_admin_access": {
+      "value": "$MYSQL_REMOTE_ADMIN"
+    },
     ".tcp_router.static_ips": {
       "value": $tcp_router_static_ips
     },
