@@ -117,8 +117,6 @@ fi
 echo "Applying syslog settings..."
 $CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$SYSLOG_PROPS"
 
-
-
 RESOURCES=$(cat <<-EOF
 {
 }
@@ -126,3 +124,32 @@ EOF
 )
 
 $CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$PROPERTIES" -pn "$NETWORK" -pr "$RESOURCES"
+
+#
+# Single node config bits
+#
+export SINGLE_NODE_AZ_ARRAY = `echo $SINGLE_NODE_AZS | jq --raw-input 'split(",")'`
+
+SINGLE_NODE_PROPS=$(cat <<-EOF
+{
+    ".properties.on_demand_broker_dedicated_single_node_plan_cf_service_access": {
+      "value": "$SINGLE_NODE_ACCESS"
+    },
+    ".properties.on_demand_broker_dedicated_single_node_plan_rabbitmq_az_placement": {
+      "value": "$SINGLE_NODE_AZ_ARRAY"
+    },
+    ".properties.on_demand_broker_dedicated_single_node_plan_rabbitmq_vm_type": {
+      "value": "$SINGLE_NODE_VM_TYPE"
+    },
+    ".properties.on_demand_broker_dedicated_single_node_plan_rabbitmq_persistent_disk_type": {
+      "value": "$SINGLE_NODE_PERS_DISK_TYPE"
+    },
+    ".properties.on_demand_broker_dedicated_single_node_plan_disk_limit_acknowledgement": {
+      "value": "$SINGLE_NODE_ACK"
+    }
+}
+EOF
+)
+
+echo "Applying single node settings..."
+$CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$SINGLE_NODE_PROPS"
