@@ -129,6 +129,7 @@ $CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-produ
 # Single node config bits
 #
 SINGLE_NODE_AZ_ARRAY=$(echo $SINGLE_NODE_AZS | jq --raw-input 'split(",")')
+SINGLE_NODE_ACK_ARRAY=$(echo $SINGLE_NODE_ACK | jq --raw-input 'split(",")')
 
 SINGLE_NODE_PROPS=$(cat <<-EOF
 {
@@ -145,7 +146,7 @@ SINGLE_NODE_PROPS=$(cat <<-EOF
       "value": "$SINGLE_NODE_PERS_DISK_TYPE"
     },
     ".properties.on_demand_broker_dedicated_single_node_plan_disk_limit_acknowledgement": {
-      "value": "$SINGLE_NODE_ACK"
+      "value": $SINGLE_NODE_ACK_ARRAY
     }
 }
 EOF
