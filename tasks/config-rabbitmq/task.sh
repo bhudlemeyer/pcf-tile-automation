@@ -136,7 +136,7 @@ SINGLE_NODE_PROPS=$(cat <<-EOF
       "value": "$SINGLE_NODE_ACCESS"
     },
     ".properties.on_demand_broker_dedicated_single_node_plan_rabbitmq_az_placement": {
-      "value": "$SINGLE_NODE_AZ_ARRAY"
+      "value": "[$SINGLE_NODE_AZS]"
     },
     ".properties.on_demand_broker_dedicated_single_node_plan_rabbitmq_vm_type": {
       "value": "$SINGLE_NODE_VM_TYPE"
