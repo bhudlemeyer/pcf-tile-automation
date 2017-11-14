@@ -79,16 +79,45 @@ PROPERTIES=$(cat <<-EOF
     },
     ".rabbitmq-server.config": {
       "value": null
+    }
+}
+EOF
+)
+
+if [[ "$SYSLOG_SELECTOR" == "true" ]]; then
+SYSLOG_PROPS=$(cat <<-EOF
+{
+    ".properties.syslog_selector": {
+      "value": "Yes"
     },
-    ".properties.syslog_address": {
+    ".properties.syslog_selector.active.syslog_transport": {
+      "value": "$SYSLOG_PROTOCOL"
+    },
+    ".properties.syslog_selector.active.syslog_address": {
       "value": "$SYSLOG_HOST"
     },
-    ".properties.syslog_port": {
+    ".properties.syslog_selector.active.syslog_port": {
       "value": $SYSLOG_PORT
     }
 }
 EOF
 )
+
+else
+SYSLOG_PROPS=$(cat <<-EOF
+{
+    ".properties.syslog_selector": {
+      "value": "No"
+    }
+}
+EOF
+)
+fi
+
+echo "Applying syslog settings..."
+$CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$SYSLOG_PROPS"
+
+
 
 RESOURCES=$(cat <<-EOF
 {
