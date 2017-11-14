@@ -128,7 +128,7 @@ $CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-produ
 #
 # Single node config bits
 #
-export SINGLE_NODE_AZ_ARRAY = `echo $SINGLE_NODE_AZS | jq --raw-input 'split(",")'`
+#export SINGLE_NODE_AZ_ARRAY = `echo $SINGLE_NODE_AZS | jq --raw-input 'split(",")'`
 
 SINGLE_NODE_PROPS=$(cat <<-EOF
 {
