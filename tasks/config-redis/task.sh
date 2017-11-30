@@ -77,11 +77,11 @@ echo "Saving properties for minimum valuable configuration"
 $CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$PROPERTIES" -pn "$NETWORK" -pr "$RESOURCES"
 
 
-if [[ "$SYSLOG_SELECTOR" == "true" ]]; then
+if [[ "$SYSLOG_SELECTOR" == "Yes without encryption" ]]; then
 SYSLOG_PROPS=$(cat <<-EOF
 {
     ".properties.syslog_selector": {
-      "value": "Yes"
+      "value": "$SYSLOG_SELECTOR"
     },
     ".properties.syslog_selector.active.syslog_transport": {
       "value": "$SYSLOG_PROTOCOL"
