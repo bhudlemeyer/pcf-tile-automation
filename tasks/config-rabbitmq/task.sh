@@ -193,7 +193,7 @@ if [[ -z "$ERRANDS_TO_WHENCHANGED" ]] || [[ "$ERRANDS_TO_WHENCHANGED" == "none" 
 else
   enabled_errands=$(
   $CMD -t https://${OPS_MGR_HOST} -u $OPS_MGR_USR -p $OPS_MGR_PWD -k errands --product-name $PRODUCT_NAME |
-  tail -n+4 | head -n-1 | grep -v false | cut -d'|' -f2 | tr -d ' '
+  tail -n+4 | head -n-1 | grep -v when-changed | cut -d'|' -f2 | tr -d ' '
   )
   if [[ "$ERRANDS_TO_WHENCHANGED" == "all" ]]; then
     errands_to_whenchanged="${enabled_errands[@]}"
