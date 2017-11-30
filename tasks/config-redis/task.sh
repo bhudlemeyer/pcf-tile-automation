@@ -178,6 +178,39 @@ else
   fi
 fi
 
+if [[ -z "$ERRANDS_TO_WHENCHANGED" ]] || [[ "$ERRANDS_TO_WHENCHANGED" == "none" ]]; then
+  echo "No post-deploy errands to set to when-changed"
+else
+  enabled_errands=$(
+  $CMD -t https://${OPS_MGR_HOST} -u $OPS_MGR_USR -p $OPS_MGR_PWD -k errands --product-name $PRODUCT_NAME |
+  tail -n+4 | head -n-1 | grep -v false | cut -d'|' -f2 | tr -d ' '
+  )
+  if [[ "$ERRANDS_TO_WHENCHANGED" == "all" ]]; then
+    errands_to_whenchanged="${enabled_errands[@]}"
+  else
+    errands_to_whenchanged=$(echo "$ERRANDS_TO_WHENCHANGED" | tr ',' '\n')
+  fi
+  
+  will_whenchanged=$(for i in $enabled_errands; do
+      for j in $errands_to_whenchanged; do
+        if [ $i == $j ]; then
+          echo $j
+        fi
+      done
+    done
+  )
+
+  if [ -z "$will_whenchanged" ]; then
+    echo "All errands are already set to when changed that were requested"
+  else
+    while read errand; do
+      echo -n Disabling $errand...
+      $CMD -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k set-errand-state --product-name $PRODUCT_NAME --errand-name $errand --post-deploy-state "when-changed"
+      echo done
+    done < <(echo "$will_whenchanged")
+  fi
+fi
+
 if [[ -z "$PREDELETE_ERRANDS_TO_DISABLE" ]] || [[ "$PREDELETE_ERRANDS_TO_DISABLE" == "none" ]]; then
   echo "No pre-delete errands to disable"
 else
