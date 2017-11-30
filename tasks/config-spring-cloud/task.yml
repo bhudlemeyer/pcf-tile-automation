@@ -15,6 +15,9 @@ params:
   SINGLETON_JOB_AZ:
   OTHER_JOB_AZS:
   NETWORK_NAME:
+  ERRANDS_TO_DISABLE:
+  ERRANDS_TO_WHENCHANGED:
+  PREDELETE_ERRANDS_TO_DISABLE:
 
 inputs:
   - name: pcf-tile-automation
