@@ -54,7 +54,7 @@ PRODUCT_PROPERTIES=$(cat <<-EOF
     "value": $SYSLOG_PORT
   },
   ".proxy.static_ips": {
-    "value": $MYSQL_PROXY_IPS
+    "value": "$MYSQL_PROXY_IPS"
   },
   ".proxy.shutdown_delay": {
     "value": $MYSQL_PROXY_SHUTDOWN_DELAY
