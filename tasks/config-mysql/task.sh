@@ -54,7 +54,13 @@ PRODUCT_PROPERTIES=$(cat <<-EOF
     "value": $SYSLOG_PORT
   },
   ".proxy.static_ips": {
-    "value": null
+    "value": $MYSQL_PROXY_IPS
+  },
+  ".proxy.shutdown_delay": {
+    "value": $MYSQL_PROXY_SHUTDOWN_DELAY
+  },
+  ".proxy.startup_delay": {
+    "value": $MYSQL_PROXY_STARTUP_DELAY
   },
   ".cf-mysql-broker.bind_hostname": {
     "value": null
