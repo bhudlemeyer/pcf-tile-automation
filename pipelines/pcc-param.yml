@@ -1,0 +1,98 @@
+# Pipeline resource configuration
+pivnet_token:             # EA Pivnet token for downloading resources from Pivnet. Find this token at https://network.pivotal.io/users/dashboard/edit-profile
+github_token:             # GitHub token for downloading resources from GitHub
+git_private_key: 
+
+pcc_major_minor_version: ^1\.*\..*$
+
+tile_upload_timeout: 1800
+pivnet_poll_interval: 1h
+iaas_type: 
+
+opsman_uri:               # FQDN to access Ops Manager without protocol (will use https), ex: opsmgr.example.com
+opsman_admin_username:    # Username for Ops Manager admin account
+opsman_admin_password:    # Password for Ops Manager admin account
+opsman_timeout_seconds:  # Timeout to wait for Ops Manager to become available
+om_ip:                   # IP to assign to Ops Manager VM
+
+singleton_job_az:        #AZ assigned to singleton jobs in redis
+deployment_network_name:
+services_network_name:   # Name of services network as defined in ops manager 
+services_nw_azs:         # Comma seperated list of AZ's to be associated with this network
+
+syslog_host: 
+syslog_port: 
+syslog_protocol:
+syslog_enable:
+service_log_external:
+syslog_enable_tls:
+syslog_permitted_peer:
+syslog_ssl_cert:
+pcc_plan_for_smoketest_name:
+dis_system_id:
+plan_1_status:
+plan_1_name:
+plan_1_desc:
+plan_1_metrics:
+plan_1_service_access:
+plan_1_service_instance:
+plan_1_servers_per_cluster:
+plan_1_default_num_servers:
+plan_1_azs:
+plan_1_locator_vm:
+plan_1_locator_persis_disk:
+plan_1_server_vm:
+plan_1_server_persis_disk:
+plan_2_status:
+plan_2_name:
+plan_2_desc:
+plan_2_metrics:
+plan_2_service_access:
+plan_2_service_instance:
+plan_2_servers_per_cluster:
+plan_2_default_num_servers:
+plan_2_azs:
+plan_2_locator_vm:
+plan_2_locator_persis_disk:
+plan_2_server_vm:
+plan_2_server_persis_disk:
+plan_3_status:
+plan_3_name:
+plan_3_desc:
+plan_3_metrics:
+plan_3_service_access:
+plan_3_service_instance:
+plan_3_servers_per_cluster:
+plan_3_default_num_servers:
+plan_3_azs:
+plan_3_locator_vm:
+plan_3_locator_persis_disk:
+plan_3_server_vm:
+plan_3_server_persis_disk:
+plan_4_status:
+plan_4_name:
+plan_4_service_access:
+plan_4_service_instance:
+plan_4_servers_per_cluster:
+plan_4_default_num_servers:
+plan_4_azs:
+plan_4_locator_vm:
+plan_4_locator_persis_disk:
+plan_4_server_vm:
+plan_4_server_persis_disk:
+plan_5_status:
+plan_5_name:
+plan_5_desc:
+plan_5_metrics:
+plan_5_service_access:
+plan_5_service_instance:
+plan_5_servers_per_cluster:
+plan_5_default_num_servers:
+plan_5_azs:
+plan_5_locator_vm:
+plan_5_locator_persis_disk:
+plan_5_server_vm:
+plan_5_server_persis_disk:
+dev_plan_status:
+pcc_errand_disable:
+pcc_predelete_errand_disable:

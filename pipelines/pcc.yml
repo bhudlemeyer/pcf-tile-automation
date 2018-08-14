@@ -1,0 +1,191 @@
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+resources:
+- name: tool-om
+  type: github-release
+  source:
+    user: pivotal-cf
+    repository: om
+    access_token: {{github_token}} ## Optional: Removing this will cause you to hit the rate limit
+
+- name: pivnet-cli
+  type: github-release
+  source:
+    user: pivotal-cf
+    repository: pivnet-cli
+    access_token: {{github_token}} ## Optional: Removing this will cause you to hit the rate limit
+
+- name: pcf-tile-automation
+  type: git
+  source:
+    uri: https://github.com/bhudlemeyer/pcf-tile-automation.git
+    branch: master
+    username: {{github_token}}
+
+- name: p-cloudcache
+  type: pivnet
+  check_every: {{pivnet_poll_interval}}
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: p-cloudcache
+    product_version: {{p-cloudcache_major_minor_version}}
+    sort_by: semver
+
+
+jobs:
+- name: upload-pcc-tile
+  plan:
+  - aggregate:
+    - get: pcf-tile-automation
+      trigger: true
+    - get: pivnet-product
+      resource: p-cloudcache
+    - get: tool-om
+    - get: pivnet-cli
+      params: {globs: ["*linux-amd64*"]}
+
+  - task: upload-tile
+    file: pcf-tile-automation/tasks/upload-product-and-stemcell/task.yml
+    attempts: 3
+    params:
+      OPS_MGR_HOST: {{opsman_uri}}
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      PIVNET_API_TOKEN: {{pivnet_token}}
+      NO_PROXY: {{company_proxy_domain}}
+      OM_IP: {{om_ip}}
+      IAAS: {{iaas_type}}
+
+  - task: stage-tile
+    file: pcf-tile-automation/tasks/stage-product/task.yml
+    params:
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+      OPSMAN_URI: {{opsman_uri}}
+      PRODUCT_NAME: p-cloudcache
+
+- name: config-pcc-tile
+  plan:
+  - aggregate:
+    - get: pcf-tile-automation
+      trigger: true
+      passed: [upload-pcc-tile]
+    - get: tool-om
+      params: {globs: ["*linux*"]}
+      passed: [upload-pcc-tile]
+
+  - task: config-pcc-tile
+    file: pcf-tile-automation/tasks/config-pcc/task.yml
+    params:
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      OPS_MGR_HOST: {{opsman_uri}}
+      SINGLETON_JOB_AZ: {{singleton_job_az}}
+      OTHER_JOB_AZS: {{services_nw_azs}}
+      NETWORK_NAME: {{deployment_network_name}}
+      SERVICE_NETWORK: {{services_network_name}}
+      SYSLOG_HOST: {{syslog_host}}
+      SYSLOG_PORT: {{syslog_port}}
+      SYSLOG_SELECTOR: {{syslog_enable}}
+      SERVICE_LOG_EXTERNAL_SYSLOG: {{service_log_external}}
+      SYSLOG_ENABLE_TLS: {{syslog_enable_tls}}
+      SYSLOG_PERMITTED_PEER: {{syslog_permitted_peer}}
+      SYSLOG_PROTOCOL: {{syslog_protocol}}
+      SYSLOG_SSL_CERT: {{syslog_ssl_cert}}
+      SMOKE_TEST_PLAN: {{pcc_plan_for_smoketest_name}}
+      DIST_SYSTEM_ID: {{dis_system_id}}
+      PLAN_1_STATUS: {{plan_1_status}}
+      PLAN_1_NAME: {{plan_1_name}}
+      PLAN_1_DESC: {{plan_1_desc}}
+      PLAN_1_METRICS: {{plan_1_metrics}}
+      PLAN_1_SERVICE_ACCESS: {{plan_1_service_access}}
+      PLAN_1_SERVICE_INSTANCE: {{plan_1_service_instance}}
+      PLAN_1_SERVERS_PER_CLUSTER: {{plan_1_servers_per_cluster}}
+      PLAN_1_DEFAULT_NUM_SERVERS: {{plan_1_default_num_servers}}
+      PLAN_1_AVAILABILITY_ZONES: {{plan_1_azs}}
+      PLAN_1_LOCATOR_VM: {{plan_1_locator_vm}}
+      PLAN_1_PERSIS_DISK_LOCATOR: {{plan_1_locator_persis_disk}}
+      PLAN_1_SERVER_VM: {{plan_1_server_vm}}
+      PLAN_1_PERSIS_DISK_SERVER: {{plan_1_server_persis_disk}}
+      PLAN_2_STATUS: {{plan_2_status}}
+      PLAN_2_NAME: {{plan_2_name}}
+      PLAN_2_DESC: {{plan_2_desc}}
+      PLAN_2_METRICS: {{plan_2_metrics}}
+      PLAN_2_SERVICE_ACCESS: {{plan_2_service_access}}
+      PLAN_2_SERVICE_INSTANCE: {{plan_2_service_instance}}
+      PLAN_2_SERVERS_PER_CLUSTER: {{plan_2_servers_per_cluster}}
+      PLAN_2_DEFAULT_NUM_SERVERS: {{plan_2_default_num_servers}}
+      PLAN_2_AVAILABILITY_ZONES: {{plan_2_azs}}
+      PLAN_2_LOCATOR_VM: {{plan_2_locator_vm}}
+      PLAN_2_PERSIS_DISK_LOCATOR: {{plan_2_locator_persis_disk}}
+      PLAN_2_SERVER_VM: {{plan_2_server_vm}}
+      PLAN_2_PERSIS_DISK_SERVER: {{plan_2_server_persis_disk}}
+      PLAN_3_STATUS: {{plan_3_status}}
+      PLAN_3_NAME: {{plan_3_name}}
+      PLAN_3_DESC: {{plan_3_desc}}
+      PLAN_3_METRICS: {{plan_3_metrics}}
+      PLAN_3_SERVICE_ACCESS: {{plan_3_service_access}}
+      PLAN_3_SERVICE_INSTANCE: {{plan_3_service_instance}}
+      PLAN_3_SERVERS_PER_CLUSTER: {{plan_3_servers_per_cluster}}
+      PLAN_3_DEFAULT_NUM_SERVERS: {{plan_3_default_num_servers}}
+      PLAN_3_AVAILABILITY_ZONES: {{plan_3_azs}}
+      PLAN_3_LOCATOR_VM: {{plan_3_locator_vm}}
+      PLAN_3_PERSIS_DISK_LOCATOR: {{plan_3_locator_persis_disk}}
+      PLAN_3_SERVER_VM: {{plan_3_server_vm}}
+      PLAN_3_PERSIS_DISK_SERVER: {{plan_3_server_persis_disk}}
+      PLAN_4_STATUS: {{plan_4_status}}
+      PLAN_4_NAME: {{plan_4_name}}
+      PLAN_4_DESC: {{plan_4_desc}}
+      PLAN_4_METRICS: {{plan_4_metrics}}
+      PLAN_4_SERVICE_ACCESS: {{plan_4_service_access}}
+      PLAN_4_SERVICE_INSTANCE: {{plan_4_service_instance}}
+      PLAN_4_SERVERS_PER_CLUSTER: {{plan_4_servers_per_cluster}}
+      PLAN_4_DEFAULT_NUM_SERVERS: {{plan_4_default_num_servers}}
+      PLAN_4_AVAILABILITY_ZONES: {{plan_4_azs}}
+      PLAN_4_LOCATOR_VM: {{plan_4_locator_vm}}
+      PLAN_4_PERSIS_DISK_LOCATOR: {{plan_4_locator_persis_disk}}
+      PLAN_4_SERVER_VM: {{plan_4_server_vm}}
+      PLAN_4_PERSIS_DISK_SERVER: {{plan_4_server_persis_disk}}
+      PLAN_5_STATUS: {{plan_5_status}}
+      PLAN_5_NAME: {{plan_5_name}}
+      PLAN_5_DESC: {{plan_5_desc}}
+      PLAN_5_METRICS: {{plan_5_metrics}}
+      PLAN_5_SERVICE_ACCESS: {{plan_5_service_access}}
+      PLAN_5_SERVICE_INSTANCE: {{plan_5_service_instance}}
+      PLAN_5_SERVERS_PER_CLUSTER: {{plan_5_servers_per_cluster}}
+      PLAN_5_DEFAULT_NUM_SERVERS: {{plan_5_default_num_servers}}
+      PLAN_5_AVAILABILITY_ZONES: {{plan_5_azs}}
+      PLAN_5_LOCATOR_VM: {{plan_5_locator_vm}}
+      PLAN_5_PERSIS_DISK_LOCATOR: {{plan_5_locator_persis_disk}}
+      PLAN_5_SERVER_VM: {{plan_5_server_vm}}
+      PLAN_5_PERSIS_DISK_SERVER: {{plan_5_server_persis_disk}}
+      DEV_PLAN_STATUS: {{dev_plan_status}}
+      ERRANDS_TO_DISABLE: {{pcc_errand_disable}}
+      PREDELETE_ERRANDS_TO_DISABLE: {{pcc_predelete_errand_disable}}
+
+#uncomment to deploy redis when config is completed
+#
+
+#- name: product-apply-changes
+#  plan:
+#  - aggregate:
+#    - get: pcf-tile-automation
+#      trigger: true
+#      passed: [config-redis-tile]
+#    - get: tool-om
+#      params: {globs: ["*linux*"]}
+#      passed: [config-redis-tile]
+#
+#  - task: apply-changes
+#    file: pcf-tile-automation/tasks/apply-changes/task.yml
+#    attempts: 3
+#    params:
+#      OPSMAN_URI: {{opsman_uri}}
+#      OPSMAN_USERNAME: {{opsman_admin_username}}
+#      OPSMAN_PASSWORD: {{opsman_admin_password}}
+#      OPSMAN_TIMEOUT: {{opsman_timeout_seconds}}
