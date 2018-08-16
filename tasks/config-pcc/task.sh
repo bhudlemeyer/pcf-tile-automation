@@ -76,7 +76,7 @@ PROPERTIES=$(cat <<-EOF
       "value": "$PLAN_1_SERVICE_ACCESS"
     },
     ".properties.plan1_enable_service_plan.enable.service_instance_quota": {
-      "value": "$PLAN_1_SERVICE_INSTANCE_QUOTAS"
+      "value": "$PLAN_1_SERVICE_INSTANCE_QUOTA"
     },
     ".properties.plan1_enable_service_plan.enable.max_servers_per_cluster": {
       "value": "$PLAN_1_SERVERS_PER_CLUSTER"
