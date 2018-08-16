@@ -18,6 +18,11 @@ function fn_other_azs {
   echo $azs_csv | awk -F "," -v braceopen='{' -v braceclose='}' -v name='"name":' -v quote='"' -v OFS='"},{"name":"' '$1=$1 {print braceopen name quote $0 quote braceclose}'
 }
 
+function pcc_azs {
+        local azs_csv=$1
+        echo $azs_csv | awk '{for (i=1;i<=NF;i++) $i="\""$i"\""}1' FS="," OFS=","
+}
+
 OTHER_AZS=$(fn_other_azs $OTHER_JOB_AZS)
 
 NETWORK=$(cat <<-EOF
@@ -38,6 +43,11 @@ NETWORK=$(cat <<-EOF
 EOF
 )
 
+PLAN_1_AZS=$(pcc_azs $PLAN_1_AVAILABILITY_ZONES)
+PLAN_2_AZS=$(pcc_azs $PLAN_2_AVAILABILITY_ZONES)
+PLAN_3_AZS=$(pcc_azs $PLAN_3_AVAILABILITY_ZONES)
+PLAN_4_AZS=$(pcc_azs $PLAN_4_AVAILABILITY_ZONES)
+PLAN_5_AZS=$(pcc_azs $PLAN_5_AVAILABILITY_ZONES)
 
 PROPERTIES=$(cat <<-EOF
 {
@@ -76,7 +86,7 @@ PROPERTIES=$(cat <<-EOF
     },
     ".properties.plan1_enable_service_plan.enable.service_instance_azs": {
       "value": [
-        $PLAN_1_AVAILABILITY_ZONES
+        $PLAN_1_AZS
        ]
     }, 
     ".properties.plan1_enable_service_plan.enable.locator_vm_type": {
