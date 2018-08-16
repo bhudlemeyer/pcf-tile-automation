@@ -39,10 +39,10 @@ EOF
 )
 
 PLAN_1_AZS=$(fn_other_azs $PLAN_1_AVAILABILITY_ZONES)
-PLAN_2_AZS=$(fn_other_azs $PLAN_2_AVAILABILITY_ZONES)
-PLAN_3_AZS=$(fn_other_azs $PLAN_3_AVAILABILITY_ZONES)
-PLAN_4_AZS=$(fn_other_azs $PLAN_4_AVAILABILITY_ZONES)
-PLAN_5_AZS=$(fn_other_azs $PLAN_5_AVAILABILITY_ZONES)
+#PLAN_2_AZS=$(fn_other_azs $PLAN_2_AVAILABILITY_ZONES)
+#PLAN_3_AZS=$(fn_other_azs $PLAN_3_AVAILABILITY_ZONES)
+#PLAN_4_AZS=$(fn_other_azs $PLAN_4_AVAILABILITY_ZONES)
+#PLAN_5_AZS=$(fn_other_azs $PLAN_5_AVAILABILITY_ZONES)
 
 PROPERTIES=$(cat <<-EOF
 {
@@ -120,16 +120,16 @@ if [[ "$SYSLOG_SELECTOR" == "enable" ]]; then
 SYSLOG_PROPS=$(cat <<-EOF
 {
     ".properties.syslog": {
-      "value": "$SYSLOG_SELECTOR"
+      "value": "$SYSLOG_SELECTOR",
     },
     ".properties.syslog.enable.syslog_protocol": {
-      "value": "$SYSLOG_PROTOCOL"
+      "value": "$SYSLOG_PROTOCOL",
     },
-    ".properties.syslog.enable.syslog_address" {
-      "value": "$SYSLOG_HOST"
+    ".properties.syslog.enable.syslog_address": {
+      "value": "$SYSLOG_HOST",
     },
     ".properties.syslog.enable.syslog_port": {
-      "value": $SYSLOG_PORT
+      "value": $SYSLOG_PORT,
     },
      ".properties.syslog.enable.syslog_enabled_for_service_instances": {
       "value": "$SERVICE_LOG_EXTERNAL_SYSLOG",
