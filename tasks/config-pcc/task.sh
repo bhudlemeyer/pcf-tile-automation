@@ -82,7 +82,7 @@ PROPERTIES=$(cat <<-EOF
     ".properties.plan1_enable_service_plan.enable.service_instance_azs": {
       "value": [
         $PLAN_1_AZS
-       ],
+       ]
     }, 
     ".properties.plan1_enable_service_plan.enable.locator_vm_type": {
       "value": "$PLAN_1_LOCATOR_VM"
