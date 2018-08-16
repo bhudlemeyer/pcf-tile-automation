@@ -24,6 +24,9 @@ function main() {
   local version
   pushd "${cwd}/pivnet-product"
     version="$(unzip -p *.pivotal 'metadata/*.yml' | grep 'product_version:' | cut -d ':' -f 2 | tr -d ' ' | tr -d "'")"
+  version="${version/\&product-version}"
+  version="${version%\"}"
+  version="${version#\"}"
   popd
 
   om-linux --target "https://${OPSMAN_URI}" \
