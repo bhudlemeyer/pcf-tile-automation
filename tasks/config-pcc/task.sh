@@ -38,11 +38,6 @@ NETWORK=$(cat <<-EOF
 EOF
 )
 
-PLAN_1_AZS=$(fn_other_azs $PLAN_1_AVAILABILITY_ZONES)
-PLAN_2_AZS=$(fn_other_azs $PLAN_2_AVAILABILITY_ZONES)
-PLAN_3_AZS=$(fn_other_azs $PLAN_3_AVAILABILITY_ZONES)
-PLAN_4_AZS=$(fn_other_azs $PLAN_4_AVAILABILITY_ZONES)
-PLAN_5_AZS=$(fn_other_azs $PLAN_5_AVAILABILITY_ZONES)
 
 PROPERTIES=$(cat <<-EOF
 {
@@ -71,7 +66,7 @@ PROPERTIES=$(cat <<-EOF
       "value": "$PLAN_1_SERVICE_ACCESS"
     },
     ".properties.plan1_enable_service_plan.enable.service_instance_quota": {
-      "value": "$PLAN_1_SERVICE_INSTANCES"
+      "value": "$PLAN_1_SERVICE_INSTANCE_QUOTAS"
     },
     ".properties.plan1_enable_service_plan.enable.max_servers_per_cluster": {
       "value": "$PLAN_1_SERVERS_PER_CLUSTER"
@@ -81,7 +76,7 @@ PROPERTIES=$(cat <<-EOF
     },
     ".properties.plan1_enable_service_plan.enable.service_instance_azs": {
       "value": [
-        "$PLAN_1_AZS"
+        $PLAN_1_AVAILABILITY_ZONES
        ]
     }, 
     ".properties.plan1_enable_service_plan.enable.locator_vm_type": {
@@ -97,16 +92,16 @@ PROPERTIES=$(cat <<-EOF
       "value": "$PLAN_1_PERSIS_DISK_SERVER"
     }, 
     ".properties.plan2_enable_service_plan": {
-      "value": "disable"
+      "value": "$PLAN_2_STATUS"
     },
     ".properties.plan3_enable_service_plan": {
-      "value": "disable"
+      "value": "$PLAN_3_STATUS"
     },
     ".properties.plan4_enable_service_plan": {
-      "value": "disable"
+      "value": "$PLAN_4_STATUS"
     },
     ".properties.plan5_enable_service_plan": {
-      "value": "disable"
+      "value": "$PLAN_5_STATUS"
     }
 }
 EOF
