@@ -39,45 +39,45 @@ EOF
 )
 
 PLAN_1_AZS=$(fn_other_azs $PLAN_1_AVAILABILITY_ZONES)
-#PLAN_2_AZS=$(fn_other_azs $PLAN_2_AVAILABILITY_ZONES)
-#PLAN_3_AZS=$(fn_other_azs $PLAN_3_AVAILABILITY_ZONES)
-#PLAN_4_AZS=$(fn_other_azs $PLAN_4_AVAILABILITY_ZONES)
-#PLAN_5_AZS=$(fn_other_azs $PLAN_5_AVAILABILITY_ZONES)
+PLAN_2_AZS=$(fn_other_azs $PLAN_2_AVAILABILITY_ZONES)
+PLAN_3_AZS=$(fn_other_azs $PLAN_3_AVAILABILITY_ZONES)
+PLAN_4_AZS=$(fn_other_azs $PLAN_4_AVAILABILITY_ZONES)
+PLAN_5_AZS=$(fn_other_azs $PLAN_5_AVAILABILITY_ZONES)
 
 PROPERTIES=$(cat <<-EOF
 {
     ".properties.errand_plan": {
-      "value": "$SMOKE_TEST_PLAN",
+      "value": "$SMOKE_TEST_PLAN"
     },
     ".properties.default_distributed_system_id": {
-      "value": $DIST_SYSTEM_ID,
+      "value": "$DIST_SYSTEM_ID"
     },
     ".properties.dev_plan_enable_service_plan": {
-      "value": "$DEV_PLAN_STATUS",
+      "value": "$DEV_PLAN_STATUS"
     },
     ".properties.plan1_enable_service_plan": {
-      "value": "$PLAN_1_STATUS",
+      "value": "$PLAN_1_STATUS"
     },
     ".properties.plan1_enable_service_plan.enable.plan_name": {
-      "value": "$PLAN_1_NAME",
+      "value": "$PLAN_1_NAME"
     },
     ".properties.plan1_enable_service_plan.enable.plan_description": {
-      "value": "$PLAN_1_DESC",
+      "value": "$PLAN_1_DESC"
     },
     ".properties.plan1_enable_service_plan.enable.service_metrics": {
-      "value": $PLAN_1_METRICS,
+      "value": "$PLAN_1_METRICS"
     },
     ".properties.plan1_enable_service_plan.enable.cf_service_access": {
-      "value": "$PLAN_1_SERVICE_ACCESS",
+      "value": "$PLAN_1_SERVICE_ACCESS"
     },
     ".properties.plan1_enable_service_plan.enable.service_instance_quota": {
-      "value": $PLAN_1_SERVICE_INSTANCES,
+      "value": "$PLAN_1_SERVICE_INSTANCES"
     },
     ".properties.plan1_enable_service_plan.enable.max_servers_per_cluster": {
-      "value": $PLAN_1_SERVERS_PER_CLUSTER,
+      "value": "$PLAN_1_SERVERS_PER_CLUSTER"
     },
     ".properties.plan1_enable_service_plan.enable.default_num_servers": {
-      "value": $PLAN_1_DEFAULT_NUM_SERVERS,
+      "value": "$PLAN_1_DEFAULT_NUM_SERVERS"
     },
     ".properties.plan1_enable_service_plan.enable.service_instance_azs": {
       "value": [
@@ -85,28 +85,28 @@ PROPERTIES=$(cat <<-EOF
        ],
     }, 
     ".properties.plan1_enable_service_plan.enable.locator_vm_type": {
-      "value": "$PLAN_1_LOCATOR_VM",
+      "value": "$PLAN_1_LOCATOR_VM"
     },
     ".properties.plan1_enable_service_plan.enable.locator_persistent_disk_type": {
-      "value": "$PLAN_1_PERSIS_DISK_LOCATOR",
+      "value": "$PLAN_1_PERSIS_DISK_LOCATOR"
     },
     ".properties.plan1_enable_service_plan.enable.server_vm_type": {
-      "value": "$PLAN_1_SERVER_VM",
+      "value": "$PLAN_1_SERVER_VM"
     },
     ".properties.plan1_enable_service_plan.enable.server_persistent_disk_type": {
-      "value": "$PLAN_1_PERSIS_DISK_SERVER",
+      "value": "$PLAN_1_PERSIS_DISK_SERVER"
     }, 
     ".properties.plan2_enable_service_plan": {
-      "value": "disable",
+      "value": "disable"
     },
     ".properties.plan3_enable_service_plan": {
-      "value": "disable",
+      "value": "disable"
     },
     ".properties.plan4_enable_service_plan": {
-      "value": "disable",
+      "value": "disable"
     },
     ".properties.plan5_enable_service_plan": {
-      "value": "disable",
+      "value": "disable"
     }
 }
 EOF
@@ -120,28 +120,28 @@ if [[ "$SYSLOG_SELECTOR" == "enable" ]]; then
 SYSLOG_PROPS=$(cat <<-EOF
 {
     ".properties.syslog": {
-      "value": "$SYSLOG_SELECTOR",
+      "value": "$SYSLOG_SELECTOR"
     },
     ".properties.syslog.enable.syslog_protocol": {
-      "value": "$SYSLOG_PROTOCOL",
+      "value": "$SYSLOG_PROTOCOL"
     },
     ".properties.syslog.enable.syslog_address": {
-      "value": "$SYSLOG_HOST",
+      "value": "$SYSLOG_HOST"
     },
     ".properties.syslog.enable.syslog_port": {
-      "value": $SYSLOG_PORT,
+      "value": "$SYSLOG_PORT"
     },
      ".properties.syslog.enable.syslog_enabled_for_service_instances": {
-      "value": "$SERVICE_LOG_EXTERNAL_SYSLOG",
+      "value": "$SERVICE_LOG_EXTERNAL_SYSLOG"
     },
     ".properties.syslog.enable.syslog_tls": {
-      "value": "$ENABLE_TLS",
+      "value": "$ENABLE_TLS"
     },
     ".properties.syslog.enable.syslog_permitted_peer": {
-       "value": "$PERMITTED_PEER",
+       "value": "$PERMITTED_PEER"
     },
     ".properties.syslog.enable.syslog_ca_cert": {
-      "value": "$SYSLOG_SSL_CERT",
+      "value": "$SYSLOG_SSL_CERT"
     }
 }
 EOF
